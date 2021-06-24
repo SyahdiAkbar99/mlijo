@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 21 Jun 2021 pada 19.02
+-- Waktu pembuatan: 24 Jun 2021 pada 17.31
 -- Versi server: 10.4.11-MariaDB
 -- Versi PHP: 7.3.15
 
@@ -53,6 +53,13 @@ CREATE TABLE `ongkir` (
   `tempat_kirim` varchar(200) NOT NULL,
   `tarif` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data untuk tabel `ongkir`
+--
+
+INSERT INTO `ongkir` (`id_ongkir`, `tempat_kirim`, `tarif`) VALUES
+(0, 'Banyuwangi', 25000);
 
 -- --------------------------------------------------------
 
@@ -107,6 +114,14 @@ CREATE TABLE `product` (
   `waktu_input` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data untuk tabel `product`
+--
+
+INSERT INTO `product` (`id_product`, `id_produk_perusahaan`, `id_category`, `nama_produk`, `satuan`, `harga_beli`, `harga_user`, `berat`, `gambar`, `keterangan`, `username`, `waktu_input`) VALUES
+(3, 0, 0, 'Mentimun', '5000', 15000, 20000, '5', 'letter_A.png', 'Baik tahan hama', 'Veqij', '2021-06-24 00:00:00'),
+(4, 0, 0, 'Mentimun', '1700', 3400, 5000, '6', 'letter_B1.png', 'Masih Segar dan utuh', 'Vela', '2021-06-23 00:00:00');
+
 -- --------------------------------------------------------
 
 --
@@ -135,9 +150,10 @@ CREATE TABLE `user` (
 
 INSERT INTO `user` (`id_user`, `id_akses`, `nama_user`, `email_user`, `no_telp`, `username`, `password`, `level`, `jenis_kelamin`, `alamat`, `tempat_lahir`, `tanggal_lahir`, `date_created`) VALUES
 (15, 1, 'admin', 'admin@gmail.com', '2147483647', 'admin', '12345', 'admin', 'laki laki', 'jenggawah', 'Jember', '2020-02-05', 0),
-(31, 2, 'administrator', 'pala@gmail.com', '083847293364', 'penjual', '123', 'penjual', '', '', '', '0000-00-00', 1587639948),
-(33, 1, 'popol', 'babeomif@gmail.com', '123243', 'popol', '123', 'admin', '', '', '', '0000-00-00', 1587752950),
-(35, 1, 'adminku', 'admin11@gmail.com', '6281336787990', 'admin11', '123456', 'admin', 'laki-laki', 'JL Kemuning', 'Banyuwangi', '2021-06-21', 1624291339);
+(31, 2, 'palau', 'pala@gmail.com', '083847293364', 'palau', '123', 'penjual', '', '', '', '0000-00-00', 1587639948),
+(33, 2, 'popol', 'babeomif@gmail.com', '123243', 'popol', '123', 'penjual', '', '', '', '0000-00-00', 1587752950),
+(35, 3, 'veqij', 'veqij@gmail.com', '6281336787990', 'veqij', '123456', 'penjual', 'laki-laki', 'JL Kemuning', 'Banyuwangi', '2021-06-21', 1624291339),
+(36, 3, 'reus', 'reus@gmail.com', '6281336787990', 'reus99', '123456', 'penjual', 'perempuan', 'JL Kemuning', 'Banyuwangi', '2021-06-21', 1624291339);
 
 -- --------------------------------------------------------
 
@@ -223,7 +239,13 @@ CREATE TABLE `user_sub_menu` (
 --
 
 INSERT INTO `user_sub_menu` (`id`, `menu_id`, `title`, `url`, `icon`, `is_active`, `urutan`) VALUES
-(1, 1, 'Dashboard Admin', 'Admin', 'dashboard', 1, 1);
+(1, 1, 'Dashboard Admin', 'Admin', 'dashboard', 1, 1),
+(2, 1, 'Data Users', 'Admin/data_user', 'people', 1, 2),
+(3, 1, 'Riwayat Transaksi', 'Admin/riwayat_transaksi', 'payments', 1, 3),
+(4, 1, 'Data Produk', 'Admin/data_produk', 'shopping_basket', 1, 4),
+(5, 2, 'Dashboard Penjual', 'Penjual', 'dashboard', 1, 1),
+(6, 3, 'Dashboard Pembeli', 'Pembeli', 'dashboard', 1, 1),
+(8, 1, 'Data Ongkir', 'Admin/shipping', 'local_shipping', 1, 5);
 
 --
 -- Indexes for dumped tables
@@ -318,13 +340,13 @@ ALTER TABLE `orders`
 -- AUTO_INCREMENT untuk tabel `product`
 --
 ALTER TABLE `product`
-  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT untuk tabel `user`
 --
 ALTER TABLE `user`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT untuk tabel `user_access_menu`
@@ -348,7 +370,7 @@ ALTER TABLE `user_role`
 -- AUTO_INCREMENT untuk tabel `user_sub_menu`
 --
 ALTER TABLE `user_sub_menu`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
