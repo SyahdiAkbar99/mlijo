@@ -25,7 +25,7 @@
 
             <!-- LOOPING MENU -->
             <?php foreach ($menu as $m) : ?>
-                <li class="nav-header text-secondary text-center">
+                <li class="nav-header text-secondary text-center m-3">
                     <h6><?= $m['menu']; ?></h6>
                 </li>
 
@@ -47,13 +47,13 @@
                 <?php foreach ($subMenu as $sm) : ?>
                     <?php if ($title == $sm['title']) : ?>
 
-                        <li class="nav-item active mb-4">
+                        <li class="nav-item active">
                             <a href="<?= base_url($sm['url']) ?>" class="nav-link">
 
                             <?php else : ?>
-                        <li class="nav-item mb-4">
+                        <li class="nav-item">
 
-                            <a href="<?= base_url($sm['url']) ?>" class="nav-link">
+                            <a href=" <?= base_url($sm['url']) ?>" class="nav-link bg-secondary">
 
                             <?php endif; ?>
 

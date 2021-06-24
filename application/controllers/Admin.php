@@ -8,6 +8,8 @@ class Admin extends CI_Controller
         parent::__construct();
         is_logged_in();
         $this->load->model('admin/DashAdmin_model', 'dam');
+        $this->load->model('seller/DashSeller_model', 'dsm');
+        $this->load->model('buyer/IndexBuyer_model', 'ibm');
         date_default_timezone_set("Asia/Jakarta");
     }
 
@@ -35,41 +37,12 @@ class Admin extends CI_Controller
         $data['data_users'] = $this->dam->getAllUser();
 
         $this->load->view('templates/admin/header', $data);
-        $this->load->view('templates/admin/navbar', $data);
         $this->load->view('templates/admin/sidebar', $data);
+        $this->load->view('templates/admin/navbar', $data);
         $this->load->view('admin/data_user', $data);
         $this->load->view('templates/admin/footer', $data);
     }
-    public function inactive_data_user()
-    {
-        $where =  $this->input->get('id');
-        $data = [
-            'is_active' => 0,
-        ];
-        $this->dam->statusUser($where, $data);
-        $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">
-            Inactive Data User Berhasil
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>');
-        redirect('Admin/data_user');
-    }
-    public function active_data_user()
-    {
-        $where =  $this->input->get('id');
-        $data = [
-            'is_active' => 1,
-        ];
-        $this->dam->statusUser($where, $data);
-        $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">
-            Aktivasi Data User Berhasil
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>');
-        redirect('Admin/data_user');
-    }
+
     public function delete_data_user() //DELETE USER STILL COMPLEX ALGORITHM
     {
         $where =  $this->input->get('id');
@@ -99,604 +72,183 @@ class Admin extends CI_Controller
     }
 
 
-
-    //Data Banner
-    public function data_banner()
+    //Data Users
+    public function data_produk()
     {
-        $this->form_validation->set_rules('nama', 'Nama', 'trim|required');
-        $this->form_validation->set_rules('deskripsi', 'Deskripsi', 'trim|required');
-        $this->form_validation->set_rules('urutan', 'Urutan', 'trim|required');
+        $this->form_validation->set_rules('nama_produk', 'Nama', 'required|trim');
+        $this->form_validation->set_rules('satuan', 'Jenis', 'required|trim');
+        $this->form_validation->set_rules('harga_beli', 'Berat', 'required|trim');
+        $this->form_validation->set_rules('harga_user', 'Warna', 'required|trim');
+        $this->form_validation->set_rules('berat', 'Jumlah', 'required|trim');
+        $this->form_validation->set_rules('keterangan', 'Harga', 'required|trim');
+        $this->form_validation->set_rules('waktu_input', 'Waktu', 'required|trim');
 
         if ($this->form_validation->run() == false) {
-            $data['title'] = 'Data Banner';
+            $data['title'] = 'Data Produk';
             $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
-            $data['data_banner'] = $this->dam->data_banner();
+            $data['data_product'] = $this->dsm->product();
+
             $this->load->view('templates/admin/header', $data);
-            $this->load->view('templates/admin/navbar', $data);
             $this->load->view('templates/admin/sidebar', $data);
-            $this->load->view('admin/data_banner', $data);
+            $this->load->view('templates/admin/navbar', $data);
+            $this->load->view('admin/data_produk', $data);
             $this->load->view('templates/admin/footer', $data);
         } else {
             // cek jika ada gambar
-            $upload_image = $_FILES['image']['name'];
+            $upload_image = $_FILES['gambar']['name'];
             if ($upload_image) {
-                $config['upload_path'] = './assets/admin/img/data/admin/banner/';
+                $config['upload_path'] = './assets/img/produk/';
                 $config['allowed_types'] = 'jpg|png|jpeg';
                 $config['max_size'] = '2048';  //2MB max
-                $config['max_width'] = '7000'; // pixel
-                $config['max_height'] = '7000'; // pixel
+                $config['max_width'] = '1024'; // pixel
+                $config['max_height'] = '1024'; // pixel
 
                 $this->load->library('upload', $config);
 
-                if ($this->upload->do_upload('image')) {
+                if ($this->upload->do_upload('gambar')) {
                     //get gambar yang baru
                     $data = [
-                        'nama' => $this->input->post('nama'),
-                        'deskripsi' => $this->input->post('deskripsi'),
-                        'urutan' => $this->input->post('urutan'),
-                        'image' => $this->upload->data('file_name'),
+                        'nama_produk' => $this->input->post('nama_produk'),
+                        'satuan' => $this->input->post('satuan'),
+                        'harga_beli' => $this->input->post('harga_beli'),
+                        'harga_user' => $this->input->post('harga_user'),
+                        'berat' => $this->input->post('berat'),
+                        'gambar' => $this->upload->data('file_name'),
+                        'keterangan' => $this->input->post('keterangan'),
+                        'username' => $this->input->post('username'),
+                        'waktu_input' => $this->input->post('waktu_input'),
+                        // 'user_id' => $this->session->userdata('id'),
                     ];
-                    $this->dam->insert_data_banner($data);
+                    $this->dsm->insert_product($data);
                     $this->session->set_flashdata(
                         'message',
                         '<div class="alert alert-success" role="alert">
-                        Data Banner berhasil ditambahkan !
+                        Data Tanaman berhasil ditambahkan !
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                     </div>'
                     );
-                    redirect('Admin/data_banner');
+                    redirect('Admin/data_produk');
                 } else {
                     $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
-                    Ukuran melebihi batas. Maksimal 2 MB
+                    Ukuran melebihi batas. Maksimal 1000px x 1000px
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>');
-                    redirect('Admin/data_banner');
+                    redirect('Admin/data_produk');
                 }
             }
 
             $data = [
-                'nama' => $this->input->post('nama'),
-                'deskripsi' => $this->input->post('deskripsi'),
-                'urutan' => $this->input->post('urutan'),
+                'nama_produk' => $this->input->post('nama_produk'),
+                'satuan' => $this->input->post('satuan'),
+                'harga_beli' => $this->input->post('harga_beli'),
+                'harga_user' => $this->input->post('harga_user'),
+                'berat' => $this->input->post('berat'),
+                'gambar' => $this->upload->data('file_name'),
+                'keterangan' => $this->input->post('keterangan'),
+                'waktu_input' => $this->input->post('waktu_input'),
             ];
 
-            $this->dam->insert_data_banner($data);
+            $this->dsm->insert_product($data);
 
             $this->session->set_flashdata(
                 'message',
                 '<div class="alert alert-success" role="alert">
-                Data Banner berhasil ditambahkan !
+                Data Tanaman berhasil ditambahkan !
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
             </div>'
             );
-            redirect('Admin/data_banner');
+            redirect('Admin/data_produk');
         }
     }
-    public function update_data_banner()
+
+    public function delete_produk() //DELETE USER STILL COMPLEX ALGORITHM
     {
-        $this->form_validation->set_rules('nama', 'Nama', 'trim|required');
-        $this->form_validation->set_rules('deskripsi', 'Deskripsi', 'trim|required');
-        $this->form_validation->set_rules('urutan', 'Urutan', 'trim|required');
-
-        if ($this->form_validation->run() == false) {
-            $data['title'] = 'Data Banner';
-            $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
-            $data['data_banner'] = $this->dam->data_banner();
-            $this->load->view('templates/admin/header', $data);
-            $this->load->view('templates/admin/navbar', $data);
-            $this->load->view('templates/admin/sidebar', $data);
-            $this->load->view('admin/data_banner', $data);
-            $this->load->view('templates/admin/footer', $data);
-        } else {
-            $where = $this->input->post('id');
-            $tb['data_bann'] = $this->db->get_where('data_banner', ['id' => $this->input->post('id')])->row_array();
-
-            $data = [
-                'nama' => $this->input->post('nama'),
-                'deskripsi' => $this->input->post('deskripsi'),
-                'urutan' => $this->input->post('urutan'),
-            ];
-
-            // cek jika ada gambar
-            $upload_image = $_FILES['image']['name'];
-            if ($upload_image) {
-                $config['upload_path'] = './assets/admin/img/data/admin/banner/';
-                $config['allowed_types'] = 'jpg|png|jpeg';
-                $config['max_size'] = '2048';  //2MB max
-                $config['max_width'] = '7000'; // pixel
-                $config['max_height'] = '7000'; // pixel
-
-                $this->load->library('upload', $config);
-
-                if ($this->upload->do_upload('image')) {
-                    //get gambar yang lama
-                    $old_image = $tb['data_bann']['image'];
-                    if ($old_image != 'default.png') {
-                        @unlink(FCPATH . 'assets/admin/img/data/admin/banner/' . $old_image);
-                    }
-                    //get gambar yang baru
-
-                    $data = [
-                        'nama' => $this->input->post('nama'),
-                        'deskripsi' => $this->input->post('deskripsi'),
-                        'urutan' => $this->input->post('urutan'),
-                        'image' => $this->upload->data('file_name')
-                    ];
-                    $this->dam->update_data_banner($where, $data);
-                    $this->session->set_flashdata(
-                        'message',
-                        '<div class="alert alert-success" role="alert">
-                        Data Banner berhasil diedit !
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                    </div>'
-                    );
-                    redirect('Admin/data_banner');
-                } else {
-                    $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
-                    Ukuran melebihi batas. Maksimal 2MB
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>');
-                    redirect('Admin/data_banner');
-                }
-            }
-            // echo '<pre>';
-            // print_r($data);
-            // die;
-            // echo '</pre>';
-
-
-            $this->dam->update_data_banner($where, $data);
-
-            $this->session->set_flashdata(
-                'message',
-                '<div class="alert alert-success" role="alert">
-                Data Banner berhasil diedit !
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-            </div>'
-            );
-            redirect('Admin/data_banner');
-        }
-    }
-    public function delete_data_banner()
-    {
-        $where = $this->input->post('id');
-        $tb['data_bann'] = $this->db->get_where('data_banner', ['id' => $this->input->post('id')])->row_array();
+        $where =  $this->input->get('id');
+        $tb['product'] = $this->db->get_where('product', ['id_product' => $this->input->get('id')])->row_array();
 
         //get gambar yang lama
-        $old_image = $tb['data_bann']['image'];
+        $old_image = $tb['product']['image'];
         if ($old_image != 'default.png') {
-            @unlink(FCPATH . 'assets/admin/img/data/admin/banner/' . $old_image);
+            @unlink(FCPATH . './assets/img/produk/' . $old_image);
         }
 
-        $this->dam->delete_data_banner($where);
-        $this->session->set_flashdata(
-            'message',
-            '<div class="alert alert-success" role="alert">
-            Data Banner berhasil diedit !
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+
+        $this->db->where('id_product', $where);
+        $this->db->delete('product');
+        $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">
+            Hapus Data User Berhasil
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-        </div>'
-        );
-        redirect('Admin/data_banner');
+            </div>');
+        redirect('Admin/data_produk');
     }
 
-
-
-    //DataPerawatan
-    public function data_penanaman()
+    public function add_orders()
     {
-        $this->form_validation->set_rules('judul', 'Judul', 'trim|required');
-        $this->form_validation->set_rules('subjudul', 'Sub Judul', 'trim|required');
-        $this->form_validation->set_rules('urutan', 'Urutan', 'trim|required');
-        $this->form_validation->set_rules('deskripsi', 'Deskripsi', 'trim|required');
+    }
+
+    public function shipping()
+    {
+        $this->form_validation->set_rules('tempat_kirim', 'Tempat Kirim', 'required|trim', [
+            'tempat_kirim' => '%s tidak boleh kosong',
+        ]);
+        $this->form_validation->set_rules('tarif', 'Tarif', 'required|trim');
 
         if ($this->form_validation->run() == false) {
-            $data['title'] = 'Data Penanaman';
+            $data['title'] = 'Data Ongkir';
             $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
-            $data['data_penanaman'] = $this->dam->data_penanaman();
+            $data['shipping'] = $this->dam->shipping();
+
             $this->load->view('templates/admin/header', $data);
-            $this->load->view('templates/admin/navbar', $data);
             $this->load->view('templates/admin/sidebar', $data);
-            $this->load->view('admin/data_penanaman', $data);
+            $this->load->view('templates/admin/navbar', $data);
+            $this->load->view('admin/ongkir', $data);
             $this->load->view('templates/admin/footer', $data);
         } else {
             // cek jika ada gambar
-            $upload_image = $_FILES['image']['name'];
-            if ($upload_image) {
-                $config['upload_path'] = './assets/admin/img/data/admin/penanaman/';
-                $config['allowed_types'] = 'jpg|png|jpeg';
-                $config['max_size'] = '2048';  //2MB max
-                $config['max_width'] = '700'; // pixel
-                $config['max_height'] = '700'; // pixel
-
-                $this->load->library('upload', $config);
-
-                if ($this->upload->do_upload('image')) {
-                    //get gambar yang baru
-                    $data = [
-                        'judul' => $this->input->post('judul'),
-                        'subjudul' => $this->input->post('subjudul'),
-                        'urutan' => $this->input->post('urutan'),
-                        'deskripsi' => $this->input->post('deskripsi'),
-                        'image' => $this->upload->data('file_name'),
-                    ];
-                    $this->dam->insert_data_penanaman($data);
-                    $this->session->set_flashdata(
-                        'message',
-                        '<div class="alert alert-success" role="alert">
-                        Data Penanaman berhasil ditambahkan !
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                    </div>'
-                    );
-                    redirect('Admin/data_penanaman');
-                } else {
-                    $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
-                    Ukuran melebihi batas. Maksimal 2 MB dan Dimensi 700 x 700 pixels
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>');
-                    redirect('Admin/data_penanaman');
-                }
-            }
-
             $data = [
-                'judul' => $this->input->post('judul'),
-                'subjudul' => $this->input->post('subjudul'),
-                'urutan' => $this->input->post('urutan'),
-                'deskripsi' => $this->input->post('deskripsi'),
+                'tempat_kirim' => $this->input->post('tempat_kirim'),
+                'tarif' => $this->input->post('tarif'),
             ];
 
-            $this->dam->insert_data_penanaman($data);
+            $this->db->insert('ongkir', $data);
 
             $this->session->set_flashdata(
                 'message',
                 '<div class="alert alert-success" role="alert">
-                Data Penanaman berhasil ditambahkan !
+                Data Ongkir berhasil ditambahkan !
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
             </div>'
             );
-            redirect('Admin/data_penanaman');
+            redirect('Admin/shipping');
         }
     }
-    public function update_data_penanaman()
+
+
+    //Riwayat Penjualan
+    public function riwayat_transaksi()
     {
-        $this->form_validation->set_rules('judul', 'Judul', 'trim|required');
-        $this->form_validation->set_rules('subjudul', 'Sub Judul', 'trim|required');
-        $this->form_validation->set_rules('urutan', 'Urutan', 'trim|required');
-        $this->form_validation->set_rules('deskripsi', 'Deskripsi', 'trim|required');
+        $data['title'] = 'Riwayat Transaksi';
+        $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
 
-        if ($this->form_validation->run() == false) {
-            $data['title'] = 'Data Penanaman';
-            $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
-            $data['data_penanaman'] = $this->dam->data_penanaman();
-            $this->load->view('templates/admin/header', $data);
-            $this->load->view('templates/admin/navbar', $data);
-            $this->load->view('templates/admin/sidebar', $data);
-            $this->load->view('admin/data_penanaman', $data);
-            $this->load->view('templates/admin/footer', $data);
-        } else {
-            $where = $this->input->post('id');
-            $tb['data_tanam'] = $this->db->get_where('data_penanaman', ['id' => $this->input->post('id')])->row_array();
+        //tampilkan data tanaman sesuai user
+        $data['riwayat_penjualan'] = $this->dam->riwayat_transaksi();
 
-            $data = [
-                'judul' => $this->input->post('judul'),
-                'subjudul' => $this->input->post('subjudul'),
-                'urutan' => $this->input->post('urutan'),
-                'deskripsi' => $this->input->post('deskripsi'),
-            ];
-
-            // cek jika ada gambar
-            $upload_image = $_FILES['image']['name'];
-            if ($upload_image) {
-                $config['upload_path'] = './assets/admin/img/data/admin/penanaman/';
-                $config['allowed_types'] = 'jpg|png|jpeg';
-                $config['max_size'] = '2048';  //2MB max
-                $config['max_width'] = '700'; // pixel
-                $config['max_height'] = '700'; // pixel
-
-                $this->load->library('upload', $config);
-
-                if ($this->upload->do_upload('image')) {
-                    //get gambar yang lama
-                    $old_image = $tb['data_tanam']['image'];
-                    if ($old_image != 'default.png') {
-                        @unlink(FCPATH . 'assets/admin/img/data/admin/penanaman/' . $old_image);
-                    }
-                    //get gambar yang baru
-
-                    $data = [
-                        'judul' => $this->input->post('judul'),
-                        'subjudul' => $this->input->post('subjudul'),
-                        'urutan' => $this->input->post('urutan'),
-                        'deskripsi' => $this->input->post('deskripsi'),
-                        'image' => $this->upload->data('file_name')
-                    ];
-                    $this->dam->update_data_penanaman($where, $data);
-                    $this->session->set_flashdata(
-                        'message',
-                        '<div class="alert alert-success" role="alert">
-                        Data Penanaman berhasil diedit !
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                    </div>'
-                    );
-                    redirect('Admin/data_penanaman');
-                } else {
-                    $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
-                    Ukuran melebihi batas. Maksimal 2MB dan dimensi 700 x 700 pixels
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>');
-                    redirect('Admin/data_penanaman');
-                }
-            }
-            // echo '<pre>';
-            // print_r($data);
-            // die;
-            // echo '</pre>';
-
-
-            $this->dam->update_data_penanaman($where, $data);
-
-            $this->session->set_flashdata(
-                'message',
-                '<div class="alert alert-success" role="alert">
-                Data Penanaman berhasil diedit !
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-            </div>'
-            );
-            redirect('Admin/data_penanaman');
-        }
+        $this->load->view('templates/admin/header', $data);
+        $this->load->view('templates/admin/sidebar', $data);
+        $this->load->view('templates/admin/navbar', $data);
+        $this->load->view('admin/riwayat_transaksi', $data);
+        $this->load->view('templates/admin/footer', $data);
     }
-    public function delete_data_penanaman()
-    {
-        $where = $this->input->post('id');
-        $tb['data_tanam'] = $this->db->get_where('data_penanaman', ['id' => $this->input->post('id')])->row_array();
-
-        //get gambar yang lama
-        $old_image = $tb['data_tanam']['image'];
-        if ($old_image != 'default.png') {
-            @unlink(FCPATH . 'assets/admin/img/data/admin/penanaman/' . $old_image);
-        }
-
-        $this->dam->delete_data_penanaman($where);
-        $this->session->set_flashdata(
-            'message',
-            '<div class="alert alert-success" role="alert">
-            Data Penanaman berhasil diedit !
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-        </div>'
-        );
-        redirect('Admin/data_penanaman');
-    }
-
-    //Data Perawatan
-    public function data_perawatan()
-    {
-        $this->form_validation->set_rules('judul', 'Judul', 'trim|required');
-        $this->form_validation->set_rules('subjudul', 'Sub Judul', 'trim|required');
-        $this->form_validation->set_rules('urutan', 'Urutan', 'trim|required');
-        $this->form_validation->set_rules('deskripsi', 'Deskripsi', 'trim|required');
-
-        if ($this->form_validation->run() == false) {
-            $data['title'] = 'Data Perawatan';
-            $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
-            $data['data_perawatan'] = $this->dam->data_perawatan();
-            $this->load->view('templates/admin/header', $data);
-            $this->load->view('templates/admin/navbar', $data);
-            $this->load->view('templates/admin/sidebar', $data);
-            $this->load->view('admin/data_perawatan', $data);
-            $this->load->view('templates/admin/footer', $data);
-        } else {
-            // cek jika ada gambar
-            $upload_image = $_FILES['image']['name'];
-            if ($upload_image) {
-                $config['upload_path'] = './assets/admin/img/data/admin/perawatan/';
-                $config['allowed_types'] = 'jpg|png|jpeg';
-                $config['max_size'] = '2048';  //2MB max
-                $config['max_width'] = '700'; // pixel
-                $config['max_height'] = '700'; // pixel
-
-                $this->load->library('upload', $config);
-
-                if ($this->upload->do_upload('image')) {
-                    //get gambar yang baru
-                    $data = [
-                        'judul' => $this->input->post('judul'),
-                        'subjudul' => $this->input->post('subjudul'),
-                        'urutan' => $this->input->post('urutan'),
-                        'deskripsi' => $this->input->post('deskripsi'),
-                        'image' => $this->upload->data('file_name'),
-                    ];
-                    $this->dam->insert_data_perawatan($data);
-                    $this->session->set_flashdata(
-                        'message',
-                        '<div class="alert alert-success" role="alert">
-                        Data Perawatan berhasil ditambahkan !
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                    </div>'
-                    );
-                    redirect('Admin/data_perawatan');
-                } else {
-                    $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
-                    Ukuran melebihi batas. Maksimal 2 MB dan Dimensi 700 x 700 pixels
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>');
-                    redirect('Admin/data_perawatan');
-                }
-            }
-
-            $data = [
-                'judul' => $this->input->post('judul'),
-                'subjudul' => $this->input->post('subjudul'),
-                'urutan' => $this->input->post('urutan'),
-                'deskripsi' => $this->input->post('deskripsi'),
-            ];
-
-            $this->dam->insert_data_perawatan($data);
-
-            $this->session->set_flashdata(
-                'message',
-                '<div class="alert alert-success" role="alert">
-                Data Perawatan berhasil ditambahkan !
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-            </div>'
-            );
-            redirect('Admin/data_perawatan');
-        }
-    }
-    public function update_data_perawatan()
-    {
-        $this->form_validation->set_rules('judul', 'Judul', 'trim|required');
-        $this->form_validation->set_rules('subjudul', 'Sub Judul', 'trim|required');
-        $this->form_validation->set_rules('urutan', 'Urutan', 'trim|required');
-        $this->form_validation->set_rules('deskripsi', 'Deskripsi', 'trim|required');
-
-        if ($this->form_validation->run() == false) {
-            $data['title'] = 'Data Perawatan';
-            $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
-            $data['data_perawatan'] = $this->dam->data_perawatan();
-            $this->load->view('templates/admin/header', $data);
-            $this->load->view('templates/admin/navbar', $data);
-            $this->load->view('templates/admin/sidebar', $data);
-            $this->load->view('admin/data_perawatan', $data);
-            $this->load->view('templates/admin/footer', $data);
-        } else {
-            $where = $this->input->post('id');
-            $tb['data_tawar'] = $this->db->get_where('data_perawatan', ['id' => $this->input->post('id')])->row_array();
-
-            $data = [
-                'judul' => $this->input->post('judul'),
-                'subjudul' => $this->input->post('subjudul'),
-                'urutan' => $this->input->post('urutan'),
-                'deskripsi' => $this->input->post('deskripsi'),
-            ];
-
-            // cek jika ada gambar
-            $upload_image = $_FILES['image']['name'];
-            if ($upload_image) {
-                $config['upload_path'] = './assets/admin/img/data/admin/perawatan/';
-                $config['allowed_types'] = 'jpg|png|jpeg';
-                $config['max_size'] = '2048';  //2MB max
-                $config['max_width'] = '700'; // pixel
-                $config['max_height'] = '700'; // pixel
-
-                $this->load->library('upload', $config);
-
-                if ($this->upload->do_upload('image')) {
-                    //get gambar yang lama
-                    $old_image = $tb['data_tawar']['image'];
-                    if ($old_image != 'default.png') {
-                        @unlink(FCPATH . 'assets/admin/img/data/admin/perawatan/' . $old_image);
-                    }
-                    //get gambar yang baru
-
-                    $data = [
-                        'judul' => $this->input->post('judul'),
-                        'subjudul' => $this->input->post('subjudul'),
-                        'urutan' => $this->input->post('urutan'),
-                        'deskripsi' => $this->input->post('deskripsi'),
-                        'image' => $this->upload->data('file_name')
-                    ];
-                    $this->dam->update_data_perawatan($where, $data);
-                    $this->session->set_flashdata(
-                        'message',
-                        '<div class="alert alert-success" role="alert">
-                        Data Perawatan berhasil diedit !
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                    </div>'
-                    );
-                    redirect('Admin/data_perawatan');
-                } else {
-                    $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
-                    Ukuran melebihi batas. Maksimal 2MB dan dimensi 700 x 700 pixels
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>');
-                    redirect('Admin/data_perawatan');
-                }
-            }
-            // echo '<pre>';
-            // print_r($data);
-            // die;
-            // echo '</pre>';
-
-
-            $this->dam->update_data_perawatan($where, $data);
-
-            $this->session->set_flashdata(
-                'message',
-                '<div class="alert alert-success" role="alert">
-                Data Perawatan berhasil diedit !
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-            </div>'
-            );
-            redirect('Admin/data_perawatan');
-        }
-    }
-    public function delete_data_perawatan()
-    {
-        $where = $this->input->post('id');
-        $tb['data_tawar'] = $this->db->get_where('data_perawatan', ['id' => $this->input->post('id')])->row_array();
-
-        //get gambar yang lama
-        $old_image = $tb['data_tawar']['image'];
-        if ($old_image != 'default.png') {
-            @unlink(FCPATH . 'assets/admin/img/data/admin/perawatan/' . $old_image);
-        }
-
-        $this->dam->delete_data_perawatan($where);
-        $this->session->set_flashdata(
-            'message',
-            '<div class="alert alert-success" role="alert">
-            Data Perawatan berhasil diedit !
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-        </div>'
-        );
-        redirect('Admin/data_perawatan');
-    }
-
-
-
-
-
 
 
 

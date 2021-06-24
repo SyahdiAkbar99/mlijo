@@ -5,7 +5,7 @@ class DashAdmin_model extends CI_Model
     //Data User
     public function getAllUser()
     {
-        $query = "SELECT * FROM user ORDER BY user.id ASC";
+        $query = "SELECT * FROM user ORDER BY user.id_user ASC";
         return $this->db->query($query)->result_array();
     }
     public function statusUser($where, $data)
@@ -92,5 +92,22 @@ class DashAdmin_model extends CI_Model
     {
         $this->db->where('email', $where);
         $this->db->update('user', $data);
+    }
+
+
+
+    //Data Riwayat Penjualan
+    public function riwayat_transaksi()
+    {
+        $query = "SELECT * FROM orderdetails
+                    JOIN orders ON orderdetails.id_order = orders.id_order";
+        return $this->db->query($query)->result_array();
+    }
+
+    //Data ongkir
+    public function shipping()
+    {
+        $query = "SELECT * FROM ongkir ORDER BY ongkir.id_ongkir DESC";
+        return $this->db->query($query)->result_array();
     }
 }
