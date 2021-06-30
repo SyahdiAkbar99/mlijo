@@ -42,7 +42,11 @@
                             <i class="material-icons">people</i>
                         </div>
                         <p class="card-category">User</p>
-                        <h3 class="card-title">n()x</h3>
+                        <h3 class="card-title">
+                            <?php foreach ($countUser as $row) : ?>
+                                <?= $row['penjual']; ?>
+                            <?php endforeach; ?>
+                        </h3>
                     </div>
                     <div class="card-footer">
                         <div class="stats">

@@ -20,6 +20,8 @@ class Admin extends CI_Controller
     {
         $data['title'] = 'Dashboard Admin';
         $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
+        $data['countUser'] = $this->dam->count_user();
+
         $this->load->view('templates/admin/header', $data);
         $this->load->view('templates/admin/sidebar', $data);
         $this->load->view('templates/admin/navbar', $data);
@@ -32,34 +34,128 @@ class Admin extends CI_Controller
     //Data Users
     public function data_user()
     {
-        $data['title'] = 'Data Users';
-        $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
-        $data['data_users'] = $this->dam->getAllUser();
+        $this->form_validation->set_rules('name_user', 'Nama', 'trim|required');
+        $this->form_validation->set_rules('email_user', 'Email', 'trim|required|valid_email|is_unique[user.email_user]');
+        $this->form_validation->set_rules('no_telp', 'No Telpon', 'trim|required|numeric');
+        $this->form_validation->set_rules('username', 'Username', 'trim|required');
+        $this->form_validation->set_rules('password', 'Password', 'trim|required');
+        $this->form_validation->set_rules('level', 'Level', 'trim|required');
+        $this->form_validation->set_rules('jenis_kelamin', 'Jenis Kelamin', 'trim|required');
+        $this->form_validation->set_rules('alamat', 'Alamat', 'trim|required');
+        $this->form_validation->set_rules('tempat_lahir', 'Tempat Lahir', 'trim|required');
+        $this->form_validation->set_rules('tanggal_lahir', 'Tanggal Lahir', 'trim|required');
 
-        $this->load->view('templates/admin/header', $data);
-        $this->load->view('templates/admin/sidebar', $data);
-        $this->load->view('templates/admin/navbar', $data);
-        $this->load->view('admin/data_user', $data);
-        $this->load->view('templates/admin/footer', $data);
+        if ($this->form_validation->run() == false) {
+            $data['title'] = 'Data Users';
+            $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
+            $data['data_users'] = $this->dam->getAllUser();
+
+            $this->load->view('templates/admin/header', $data);
+            $this->load->view('templates/admin/sidebar', $data);
+            $this->load->view('templates/admin/navbar', $data);
+            $this->load->view('admin/data_user', $data);
+            $this->load->view('templates/admin/footer', $data);
+        } else {
+            $data = [
+                'nama_user' => $this->input->post('name_user'),
+                'email_user' => $this->input->post('email_user'),
+                'no_telp' => $this->input->post('no_telp'),
+                'username' => $this->input->post('username'),
+                'password' => $this->input->post('password'),
+                'level' => $this->input->post('level'),
+                'jenis_kelamin' => $this->input->post('jenis_kelamin'),
+                'alamat' => $this->input->post('alamat'),
+                'tempat_lahir' => $this->input->post('tempat_lahir'),
+                'tanggal_lahir' => $this->input->post('tanggal_lahir'),
+                'date_created' => time(),
+                'id_akses' => 2,
+            ];
+            $query = $this->db->insert('user', $data);
+            if ($query) {
+                $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">
+                Input Data Penjual Berhasil
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>');
+                redirect('Admin/data_user');
+            } else {
+                $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
+                Input Data Penjual Gagal
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>');
+                redirect('Admin/data_user');
+            }
+        }
+    }
+
+    public function edit_data_user()
+    {
+        $this->form_validation->set_rules('name_user', 'Nama', 'trim|required');
+        $this->form_validation->set_rules('email_user', 'Email', 'trim|required|valid_email');
+        $this->form_validation->set_rules('no_telp', 'No Telpon', 'trim|required|numeric');
+        $this->form_validation->set_rules('username', 'Username', 'trim|required');
+        $this->form_validation->set_rules('password', 'Password', 'trim|required');
+        $this->form_validation->set_rules('level', 'Level', 'trim|required');
+        $this->form_validation->set_rules('jenis_kelamin', 'Jenis Kelamin', 'trim|required');
+        $this->form_validation->set_rules('alamat', 'Alamat', 'trim|required');
+        $this->form_validation->set_rules('tempat_lahir', 'Tempat Lahir', 'trim|required');
+        $this->form_validation->set_rules('tanggal_lahir', 'Tanggal Lahir', 'trim|required');
+
+        if ($this->form_validation->run() == false) {
+            $data['title'] = 'Data Users';
+            $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
+            $data['data_users'] = $this->dam->getAllUser();
+
+            $this->load->view('templates/admin/header', $data);
+            $this->load->view('templates/admin/sidebar', $data);
+            $this->load->view('templates/admin/navbar', $data);
+            $this->load->view('admin/data_user', $data);
+            $this->load->view('templates/admin/footer', $data);
+        } else {
+            $id = $this->input->post('id');
+            $data = [
+                'nama_user' => $this->input->post('name_user'),
+                'email_user' => $this->input->post('email_user'),
+                'no_telp' => $this->input->post('no_telp'),
+                'username' => $this->input->post('username'),
+                'password' => $this->input->post('password'),
+                'level' => $this->input->post('level'),
+                'jenis_kelamin' => $this->input->post('jenis_kelamin'),
+                'alamat' => $this->input->post('alamat'),
+                'tempat_lahir' => $this->input->post('tempat_lahir'),
+                'tanggal_lahir' => $this->input->post('tanggal_lahir'),
+                'date_created' => time(),
+                'id_akses' => 2,
+            ];
+            $this->db->where('id_user', $id);
+            $query = $this->db->update('user', $data);
+            if ($query) {
+                $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">
+                Update Data Penjual Berhasil
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>');
+                redirect('Admin/data_user');
+            } else {
+                $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
+                Update Data Penjual Gagal
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>');
+                redirect('Admin/data_user');
+            }
+        }
     }
 
     public function delete_data_user() //DELETE USER STILL COMPLEX ALGORITHM
     {
         $where =  $this->input->get('id');
-        $tb['user'] = $this->db->get_where('user', ['id' => $this->input->get('id')])->row_array();
-
-        //get gambar yang lama
-        if ($tb['user']['role_id'] == 2) {
-            $old_image = $tb['user']['image'];
-            if ($old_image != 'default.png') {
-                @unlink(FCPATH . 'assets/admin/img/profile/seller/' . $old_image);
-            }
-        } else {
-            $old_image = $tb['user']['image'];
-            if ($old_image != 'default.png') {
-                @unlink(FCPATH . 'assets/user/img/profile/' . $old_image);
-            }
-        }
+        $tb['user'] = $this->db->get_where('user', ['id_user' => $this->input->get('id')])->row_array();
 
         $this->dam->deleteUser($where);
         $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">
@@ -72,7 +168,7 @@ class Admin extends CI_Controller
     }
 
 
-    //Data Users
+    //Data Produk
     public function data_produk()
     {
         $this->form_validation->set_rules('nama_produk', 'Nama', 'required|trim');
@@ -83,10 +179,13 @@ class Admin extends CI_Controller
         $this->form_validation->set_rules('keterangan', 'Harga', 'required|trim');
         $this->form_validation->set_rules('waktu_input', 'Waktu', 'required|trim');
 
+        $this->form_validation->set_rules('id_ongkir', 'Nomer Lokasi', 'required|trim');
+
         if ($this->form_validation->run() == false) {
             $data['title'] = 'Data Produk';
             $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
             $data['data_product'] = $this->dsm->product();
+            $data['shipping'] = $this->dam->shipping();
 
             $this->load->view('templates/admin/header', $data);
             $this->load->view('templates/admin/sidebar', $data);
@@ -113,10 +212,13 @@ class Admin extends CI_Controller
                         'harga_beli' => $this->input->post('harga_beli'),
                         'harga_user' => $this->input->post('harga_user'),
                         'berat' => $this->input->post('berat'),
+                        'stok' => $this->input->post('stok'),
                         'gambar' => $this->upload->data('file_name'),
                         'keterangan' => $this->input->post('keterangan'),
                         'username' => $this->input->post('username'),
+
                         'waktu_input' => $this->input->post('waktu_input'),
+                        'id_ongkir' => $this->input->post('id_ongkir'),
                         // 'user_id' => $this->session->userdata('id'),
                     ];
                     $this->dsm->insert_product($data);
@@ -149,6 +251,8 @@ class Admin extends CI_Controller
                 'berat' => $this->input->post('berat'),
                 'gambar' => $this->upload->data('file_name'),
                 'keterangan' => $this->input->post('keterangan'),
+                'username' => $this->input->post('username'),
+
                 'waktu_input' => $this->input->post('waktu_input'),
             ];
 
@@ -202,7 +306,7 @@ class Admin extends CI_Controller
         $this->form_validation->set_rules('tarif', 'Tarif', 'required|trim');
 
         if ($this->form_validation->run() == false) {
-            $data['title'] = 'Data Ongkir';
+            $data['title'] = 'Data Lokasi';
             $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
             $data['shipping'] = $this->dam->shipping();
 
@@ -233,6 +337,169 @@ class Admin extends CI_Controller
         }
     }
 
+    public function edit_shipping()
+    {
+        $this->form_validation->set_rules('tempat_kirim', 'Tempat Kirim', 'required|trim', [
+            'tempat_kirim' => '%s tidak boleh kosong',
+        ]);
+        $this->form_validation->set_rules('tarif', 'Tarif', 'required|trim');
+
+        if ($this->form_validation->run() == false) {
+            $data['title'] = 'Data Lokasi';
+            $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
+            $data['shipping'] = $this->dam->shipping();
+
+            $this->load->view('templates/admin/header', $data);
+            $this->load->view('templates/admin/sidebar', $data);
+            $this->load->view('templates/admin/navbar', $data);
+            $this->load->view('admin/ongkir', $data);
+            $this->load->view('templates/admin/footer', $data);
+        } else {
+            $id = $this->input->post('id');
+            $data = [
+                'tempat_kirim' => $this->input->post('tempat_kirim'),
+                'tarif' => $this->input->post('tarif'),
+            ];
+
+            $this->db->where('id_ongkir', $id);
+
+            $query = $this->db->update('ongkir', $data);
+            if ($query) {
+                $this->session->set_flashdata(
+                    'message',
+                    '<div class="alert alert-success" role="alert">
+                        Data Lokasi berhasil di-edit !
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                    </div>'
+                );
+                redirect('Admin/shipping');
+            } else {
+                $this->session->set_flashdata(
+                    'message',
+                    '<div class="alert alert-danger" role="alert">
+                        Data Lokasi gagal di-edit !
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                    </div>'
+                );
+                redirect('Admin/shipping');
+            }
+        }
+    }
+
+    public function delete_shipping()
+    {
+        $where =  $this->input->get('id');
+
+        $this->db->where('id_ongkir', $where);
+        $this->db->delete('ongkir');
+        $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">
+            Hapus Data Ongkir Berhasil
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>');
+        redirect('Admin/shipping');
+    }
+
+    public function data_kategori()
+    {
+        $this->form_validation->set_rules('tempat_kirim', 'Tempat Kirim', 'required|trim', [
+            'tempat_kirim' => '%s tidak boleh kosong',
+        ]);
+        $this->form_validation->set_rules('tarif', 'Tarif', 'required|trim');
+
+        if ($this->form_validation->run() == false) {
+            $data['title'] = 'Data Kategori';
+            $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
+            $data['shipping'] = $this->dam->shipping();
+
+            $this->load->view('templates/admin/header', $data);
+            $this->load->view('templates/admin/sidebar', $data);
+            $this->load->view('templates/admin/navbar', $data);
+            $this->load->view('admin/ongkir', $data);
+            $this->load->view('templates/admin/footer', $data);
+        } else {
+            // cek jika ada gambar
+            $data = [
+                'tempat_kirim' => $this->input->post('tempat_kirim'),
+                'tarif' => $this->input->post('tarif'),
+            ];
+
+            $this->db->insert('ongkir', $data);
+
+            $this->session->set_flashdata(
+                'message',
+                '<div class="alert alert-success" role="alert">
+                Data Ongkir berhasil ditambahkan !
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+            </div>'
+            );
+            redirect('Admin/shipping');
+        }
+    }
+
+    public function edit_kategori()
+    {
+        $this->form_validation->set_rules('tempat_kirim', 'Tempat Kirim', 'required|trim', [
+            'tempat_kirim' => '%s tidak boleh kosong',
+        ]);
+        $this->form_validation->set_rules('tarif', 'Tarif', 'required|trim');
+
+        if ($this->form_validation->run() == false) {
+            $data['title'] = 'Data Lokasi';
+            $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
+            $data['shipping'] = $this->dam->shipping();
+
+            $this->load->view('templates/admin/header', $data);
+            $this->load->view('templates/admin/sidebar', $data);
+            $this->load->view('templates/admin/navbar', $data);
+            $this->load->view('admin/ongkir', $data);
+            $this->load->view('templates/admin/footer', $data);
+        } else {
+            $id = $this->input->post('id');
+            $data = [
+                'tempat_kirim' => $this->input->post('tempat_kirim'),
+                'tarif' => $this->input->post('tarif'),
+            ];
+
+            $this->db->where('id_ongkir', $id);
+
+            $query = $this->db->update('ongkir', $data);
+            if ($query) {
+                $this->session->set_flashdata(
+                    'message',
+                    '<div class="alert alert-success" role="alert">
+                        Data Lokasi berhasil di-edit !
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                    </div>'
+                );
+                redirect('Admin/shipping');
+            } else {
+                $this->session->set_flashdata(
+                    'message',
+                    '<div class="alert alert-danger" role="alert">
+                        Data Lokasi gagal di-edit !
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                    </div>'
+                );
+                redirect('Admin/shipping');
+            }
+        }
+    }
+
+    public function delete_kategori()
+    {
+    }
 
     //Riwayat Penjualan
     public function riwayat_transaksi()

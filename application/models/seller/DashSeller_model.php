@@ -12,7 +12,8 @@ class DashSeller_model extends CI_Model
     //Data Tanaman
     public function product()
     {
-        $query = "SELECT * FROM product";
+        $query = "SELECT * FROM product
+                    JOIN ongkir ON product.id_ongkir = ongkir.id_ongkir";
         return $this->db->query($query)->result_array();
     }
     public function insert_product($data)

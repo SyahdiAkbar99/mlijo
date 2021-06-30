@@ -112,12 +112,12 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header bg-success">
-                            <h4 class="modal-title">Pesan <?= $title ?></h4>
+                            <h4 class="modal-title">Edit <?= $title ?></h4>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form action="<?= base_url('Admin/edit'); ?>" method="get">
+                        <form action="<?= base_url('Admin/edit_shipping'); ?>" method="post">
                             <div class="modal-body">
                                 <input type="hidden" name="id" id="id" value="<?= $shp['id_ongkir']; ?>">
                                 <div class="form-group" class="mt-4">
@@ -157,7 +157,7 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form action="<?= base_url('Admin/delete_produk'); ?>" method="get">
+                        <form action="<?= base_url('Admin/delete_shipping'); ?>" method="get">
                             <div class="modal-body">
                                 <input type="hidden" name="id" id="id" value="<?= $shp['id_ongkir']; ?>">
                                 <p class="text-center">Apakah anda yakin data ini dihapus?</p>
