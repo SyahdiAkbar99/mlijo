@@ -4,13 +4,16 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header-success">
-                        <h4 class="card-title">Lokasi</h4>
-                        <p class="card-category">Data Lokasi mlijo.site</p>
+                        <h4 class="card-title">Kategori</h4>
+                        <p class="card-category">Data Kategori mlijo.site</p>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <?php if (validation_errors()) : ?>
                                 <div class="alert alert-danger" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
                                     <?= validation_errors(); ?>
                                 </div>
                             <?php endif; ?>
@@ -19,32 +22,28 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Tempat Kirim</th>
-                                        <th>Tarif</th>
+                                        <th>Nama Kategori</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
                                     $no = 1;
-                                    foreach ($shipping as $shp) : ?>
+                                    foreach ($category as $ctg) : ?>
                                         <tr>
                                             <td><?= $no ?></td>
                                             <td>
-                                                <?= $shp['tempat_kirim']; ?>
-                                            </td>
-                                            <td>
-                                                <?= $shp['tarif']; ?>
+                                                <?= $ctg['nama_category']; ?>
                                             </td>
                                             <td>
                                                 <div class="row">
                                                     <div class="col-lg-1">
-                                                        <a href="#edit<?= $shp['id_ongkir'] ?>" class="badge badge-warning" data-toggle="modal">
+                                                        <a href="#edit<?= $ctg['id_category'] ?>" class="badge badge-warning" data-toggle="modal">
                                                             <i class="fa fa-edit"></i>Edit
                                                         </a>
                                                     </div>
                                                     <div class="col-lg-1">
-                                                        <a href="#delete<?= $shp['id_ongkir'] ?>" class="badge badge-danger" data-toggle="modal">
+                                                        <a href="#delete<?= $ctg['id_category'] ?>" class="badge badge-danger" data-toggle="modal">
                                                             <i class="fa fa-edit"></i>Delete
                                                         </a>
                                                     </div>
@@ -78,18 +77,12 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form action="<?= base_url('Admin/shipping'); ?>" method="post" enctype="multipart/form-data">
+                    <form action="<?= base_url('Admin/data_kategori'); ?>" method="post" enctype="multipart/form-data">
                         <div class="modal-body">
                             <div class="form-group" class="mt-4">
-                                <label for="Nama" class="">Tempat Kirim</label>
+                                <label for="Kategori" class="">Kategori</label>
                                 <br>
-                                <input type="text" class="form-control" name="tempat_kirim" id="tempat_kirim" placeholder="Tempat Kirim">
-                            </div>
-                            <br>
-                            <div class="form-group" class="mt-4">
-                                <label for="Jenis" class="">Tarif</label>
-                                <br>
-                                <input type="text" class="form-control" name="tarif" id="tarif" placeholder="Tarif">
+                                <input type="text" class="form-control" name="nama_category" id="nama_category">
                             </div>
                         </div>
                         <div class="modal-footer justify-content-end">
@@ -107,8 +100,8 @@
 
 
 
-        <?php foreach ($shipping as $shp) : ?>
-            <div class="modal fade" id="edit<?= $shp['id_ongkir']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+        <?php foreach ($category as $ctg) : ?>
+            <div class="modal fade" id="edit<?= $ctg['id_category']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header bg-success">
@@ -117,18 +110,13 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form action="<?= base_url('Admin/edit_shipping'); ?>" method="post">
+                        <form action="<?= base_url('Admin/edit_kategori'); ?>" method="post">
                             <div class="modal-body">
-                                <input type="hidden" name="id" id="id" value="<?= $shp['id_ongkir']; ?>">
+                                <input type="hidden" name="id" id="id" value="<?= $ctg['id_category']; ?>">
                                 <div class="form-group" class="mt-4">
-                                    <label for="Nama" class="">Tempat Kirim</label>
+                                    <label for="Kategori" class="">Kategori</label>
                                     <br>
-                                    <input type="text" class="form-control" name="tempat_kirim" id="tempat_kirim" value="<?= $shp['tempat_kirim']; ?>" placeholder="Tempat Kirim" readonly>
-                                </div>
-                                <div class="form-group" class="mt-4">
-                                    <label for="Jenis" class="">Tarif</label>
-                                    <br>
-                                    <input type="text" class="form-control" name="tarif" id="tarif" value="<?= $shp['tarif']; ?>" placeholder="Tarif">
+                                    <input type="text" class="form-control" name="nama_category" id="nama_category" value="<?= $ctg['nama_category']; ?>">
                                 </div>
                                 <p class="text-center">Apakah anda yakin edit item ini?</p>
                             </div>
@@ -147,8 +135,8 @@
 
 
         <!-- Modal Delete -->
-        <?php foreach ($shipping as $shp) : ?>
-            <div class="modal fade" id="delete<?= $shp['id_ongkir']; ?>">
+        <?php foreach ($category as $ctg) : ?>
+            <div class="modal fade" id="delete<?= $ctg['id_category']; ?>">
                 <div class=" modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header bg-success">
@@ -157,9 +145,9 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form action="<?= base_url('Admin/delete_shipping'); ?>" method="get">
+                        <form action="<?= base_url('Admin/delete_kategori'); ?>" method="get">
                             <div class="modal-body">
-                                <input type="hidden" name="id" id="id" value="<?= $shp['id_ongkir']; ?>">
+                                <input type="hidden" name="id" id="id" value="<?= $ctg['id_category']; ?>">
                                 <p class="text-center">Apakah anda yakin data ini dihapus?</p>
                             </div>
                             <div class="modal-footer justify-content-end">

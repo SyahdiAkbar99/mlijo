@@ -21,6 +21,9 @@ class Admin extends CI_Controller
         $data['title'] = 'Dashboard Admin';
         $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
         $data['countUser'] = $this->dam->count_user();
+        $data['transaksi1'] = $this->dam->getOrderMonthly();
+        $data['transaksi2'] = $this->dam->getOrderFinish();
+        $data['ongkir1'] = $this->dam->getOrderOngkir();
 
         $this->load->view('templates/admin/header', $data);
         $this->load->view('templates/admin/sidebar', $data);
@@ -168,24 +171,68 @@ class Admin extends CI_Controller
     }
 
 
+    // fungsi membuat kode pemesanan sesuai tanggal
+    public function Kode()
+    {
+        $tgl = date('d.m.');
+        $tahun = date('Y/');
+        $date = date('d.m.');
+        $this->db->like('kode_transaksi', $tgl);
+        $this->db->like('kode_transaksi', $tahun);
+        $this->db->select('RIGHT(orders.kode_transaksi,2) as kode', FALSE);
+        $this->db->order_by('kode_transaksi', 'DESC');
+        $this->db->limit(1);
+        $query = $this->db->get('orders');  //cek dulu apakah ada sudah ada kode di tabel.    
+        if ($query->num_rows() <> 0) {
+            //cek kode jika telah tersedia    
+            $data = $query->row();
+            $kode = intval($data->kode) + 1;
+        } else {
+            $kode = 1;  //cek jika kode belum terdapat pada table
+        }
+        $batas = str_pad($kode, 3, "0", STR_PAD_LEFT);
+        $kodetampil = $date . 'PDR/' . $tahun . $batas;  //format kode
+        return $kodetampil;
+    }
+
     //Data Produk
     public function data_produk()
     {
-        $this->form_validation->set_rules('nama_produk', 'Nama', 'required|trim');
-        $this->form_validation->set_rules('satuan', 'Jenis', 'required|trim');
-        $this->form_validation->set_rules('harga_beli', 'Berat', 'required|trim');
-        $this->form_validation->set_rules('harga_user', 'Warna', 'required|trim');
-        $this->form_validation->set_rules('berat', 'Jumlah', 'required|trim');
-        $this->form_validation->set_rules('keterangan', 'Harga', 'required|trim');
-        $this->form_validation->set_rules('waktu_input', 'Waktu', 'required|trim');
+        $this->form_validation->set_rules('nama_produk', 'Nama', 'required|trim', [
+            'required' => '%s tidak boleh kosong !'
+        ]);
+        $this->form_validation->set_rules('satuan', 'Satuan', 'required|trim', [
+            'required' => '%s tidak boleh kosong !'
+        ]);
+        $this->form_validation->set_rules('harga_beli', 'Harga Beli', 'required|trim', [
+            'required' => '%s tidak boleh kosong !'
+        ]);
+        $this->form_validation->set_rules('harga_user', 'Harga User', 'required|trim', [
+            'required' => '%s tidak boleh kosong !'
+        ]);
+        $this->form_validation->set_rules('berat', 'Berat', 'required|trim', [
+            'required' => '%s tidak boleh kosong !'
+        ]);
+        $this->form_validation->set_rules('stok', 'Stok', 'required|trim', [
+            'required' => '%s tidak boleh kosong !'
+        ]);
+        $this->form_validation->set_rules('keterangan', 'Keterangan', 'required|trim', [
+            'required' => '%s tidak boleh kosong !'
+        ]);
+        $this->form_validation->set_rules('waktu_input', 'Waktu', 'required|trim', [
+            'required' => '%s tidak boleh kosong !'
+        ]);
 
-        $this->form_validation->set_rules('id_ongkir', 'Nomer Lokasi', 'required|trim');
+        $this->form_validation->set_rules('id_ongkir', 'Lokasi', 'required|trim');
+        $this->form_validation->set_rules('id_category', 'Kategori', 'required|trim');
 
         if ($this->form_validation->run() == false) {
             $data['title'] = 'Data Produk';
             $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
             $data['data_product'] = $this->dsm->product();
             $data['shipping'] = $this->dam->shipping();
+            $data['category'] = $this->dam->category();
+            $data['code'] = $this->Kode();
 
             $this->load->view('templates/admin/header', $data);
             $this->load->view('templates/admin/sidebar', $data);
@@ -219,13 +266,14 @@ class Admin extends CI_Controller
 
                         'waktu_input' => $this->input->post('waktu_input'),
                         'id_ongkir' => $this->input->post('id_ongkir'),
-                        // 'user_id' => $this->session->userdata('id'),
+                        'id_category' => $this->input->post('id_category'),
+                        'id_user' => $this->session->userdata('id_user'),
                     ];
                     $this->dsm->insert_product($data);
                     $this->session->set_flashdata(
                         'message',
                         '<div class="alert alert-success" role="alert">
-                        Data Tanaman berhasil ditambahkan !
+                        Data Produk berhasil ditambahkan !
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -252,6 +300,9 @@ class Admin extends CI_Controller
                 'gambar' => $this->upload->data('file_name'),
                 'keterangan' => $this->input->post('keterangan'),
                 'username' => $this->input->post('username'),
+                'id_ongkir' => $this->input->post('id_ongkir'),
+                'id_category' => $this->input->post('id_category'),
+                'id_user' => $this->session->userdata('id_user'),
 
                 'waktu_input' => $this->input->post('waktu_input'),
             ];
@@ -261,7 +312,7 @@ class Admin extends CI_Controller
             $this->session->set_flashdata(
                 'message',
                 '<div class="alert alert-success" role="alert">
-                Data Tanaman berhasil ditambahkan !
+                Data Produk berhasil ditambahkan !
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -271,13 +322,175 @@ class Admin extends CI_Controller
         }
     }
 
+
+    public function edit_produk()
+    {
+        $this->form_validation->set_rules('nama_produk', 'Nama', 'required|trim', [
+            'required' => '%s tidak boleh kosong !'
+        ]);
+        $this->form_validation->set_rules('satuan', 'Satuan', 'required|trim', [
+            'required' => '%s tidak boleh kosong !'
+        ]);
+        $this->form_validation->set_rules('harga_beli', 'Harga Beli', 'required|trim', [
+            'required' => '%s tidak boleh kosong !'
+        ]);
+        $this->form_validation->set_rules('harga_user', 'Harga User', 'required|trim', [
+            'required' => '%s tidak boleh kosong !'
+        ]);
+        $this->form_validation->set_rules('berat', 'Berat', 'required|trim', [
+            'required' => '%s tidak boleh kosong !'
+        ]);
+        $this->form_validation->set_rules('stok', 'Stok', 'required|trim', [
+            'required' => '%s tidak boleh kosong !'
+        ]);
+        $this->form_validation->set_rules('keterangan', 'Keterangan', 'required|trim', [
+            'required' => '%s tidak boleh kosong !'
+        ]);
+        $this->form_validation->set_rules('waktu_input', 'Waktu', 'required|trim', [
+            'required' => '%s tidak boleh kosong !'
+        ]);
+
+        $this->form_validation->set_rules('id_ongkir', 'Lokasi', 'required|trim');
+        $this->form_validation->set_rules('id_category', 'Kategori', 'required|trim');
+
+        if ($this->form_validation->run() == false) {
+            $data['title'] = 'Data Produk';
+            $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
+            $data['data_product'] = $this->dsm->product();
+            $data['shipping'] = $this->dam->shipping();
+            $data['category'] = $this->dam->category();
+
+            $this->load->view('templates/admin/header', $data);
+            $this->load->view('templates/admin/sidebar', $data);
+            $this->load->view('templates/admin/navbar', $data);
+            $this->load->view('admin/data_produk', $data);
+            $this->load->view('templates/admin/footer', $data);
+        } else {
+            // cek jika ada gambar
+            $tb['product'] = $this->db->get_where('product', ['id_product' => $this->input->post('id')])->row_array();
+            $upload_image = $_FILES['gambar']['name'];
+            if ($upload_image) {
+                $config['upload_path'] = './assets/img/produk/';
+                $config['allowed_types'] = 'jpg|png|jpeg';
+                $config['max_size'] = '2048';  //2MB max
+                $config['max_width'] = '1024'; // pixel
+                $config['max_height'] = '1024'; // pixel
+
+                $this->load->library('upload', $config);
+
+                if ($this->upload->do_upload('gambar')) {
+                    //get gambar yang lama
+                    $old_image = $tb['product']['gambar'];
+                    if ($old_image != 'default.png') {
+                        @unlink(FCPATH . './assets/img/produk/' . $old_image);
+                    }
+
+                    //get gambar yang baru
+                    $id = $this->input->post('id');
+                    $data = [
+                        'nama_produk' => $this->input->post('nama_produk'),
+                        'satuan' => $this->input->post('satuan'),
+                        'harga_beli' => $this->input->post('harga_beli'),
+                        'harga_user' => $this->input->post('harga_user'),
+                        'berat' => $this->input->post('berat'),
+                        'stok' => $this->input->post('stok'),
+                        'gambar' => $this->upload->data('file_name'),
+                        'keterangan' => $this->input->post('keterangan'),
+                        'username' => $this->input->post('username'),
+                        'waktu_input' => $this->input->post('waktu_input'),
+                        'id_ongkir' => $this->input->post('id_ongkir'),
+                        'id_category' => $this->input->post('id_category'),
+                        'id_user' => $this->session->userdata('id_user'),
+                    ];
+                    $this->db->where('id_product', $id);
+                    $query = $this->db->update('product', $data);
+                    if ($query) {
+                        $this->session->set_flashdata(
+                            'message',
+                            '<div class="alert alert-success" role="alert">
+                            Data Product berhasil diedit dengan gambar !
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>'
+                        );
+                        redirect('Admin/data_produk');
+                    } else {
+                        $this->session->set_flashdata(
+                            'message',
+                            '<div class="alert alert-danger" role="alert">
+                            Data Product diedit tanpa gambar !
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>'
+                        );
+                        redirect('Admin/data_produk');
+                    }
+                } else {
+                    $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
+                    Ukuran melebihi batas. Maksimal 1000px x 1000px
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>');
+                    redirect('Admin/data_produk');
+                }
+            }
+
+            $id = $this->input->post('id');
+            $data = [
+                'nama_produk' => $this->input->post('nama_produk'),
+                'satuan' => $this->input->post('satuan'),
+                'harga_beli' => $this->input->post('harga_beli'),
+                'harga_user' => $this->input->post('harga_user'),
+                'berat' => $this->input->post('berat'),
+                'gambar' => $this->upload->data('file_name'),
+                'keterangan' => $this->input->post('keterangan'),
+                'username' => $this->input->post('username'),
+                'id_ongkir' => $this->input->post('id_ongkir'),
+                'id_category' => $this->input->post('id_category'),
+                'id_user' => $this->session->userdata('id_user'),
+
+                'waktu_input' => $this->input->post('waktu_input'),
+            ];
+
+            $this->db->where('id_product', $id);
+            $query1 = $this->db->update('product', $data);
+
+            if ($query1) {
+                $this->session->set_flashdata(
+                    'message',
+                    '<div class="alert alert-success" role="alert">
+                    Data Product berhasil ditambahkan !
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>'
+                );
+                redirect('Admin/data_produk');
+            } else {
+                $this->session->set_flashdata(
+                    'message',
+                    '<div class="alert alert-danger" role="alert">
+                    Data Product gagal ditambahkan !
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>'
+                );
+                redirect('Admin/data_produk');
+            }
+        }
+    }
+
     public function delete_produk() //DELETE USER STILL COMPLEX ALGORITHM
     {
         $where =  $this->input->get('id');
         $tb['product'] = $this->db->get_where('product', ['id_product' => $this->input->get('id')])->row_array();
 
         //get gambar yang lama
-        $old_image = $tb['product']['image'];
+        $old_image = $tb['product']['gambar'];
         if ($old_image != 'default.png') {
             @unlink(FCPATH . './assets/img/produk/' . $old_image);
         }
@@ -294,9 +507,6 @@ class Admin extends CI_Controller
         redirect('Admin/data_produk');
     }
 
-    public function add_orders()
-    {
-    }
 
     public function shipping()
     {
@@ -328,10 +538,10 @@ class Admin extends CI_Controller
                 'message',
                 '<div class="alert alert-success" role="alert">
                 Data Ongkir berhasil ditambahkan !
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-            </div>'
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+                </div>'
             );
             redirect('Admin/shipping');
         }
@@ -368,10 +578,10 @@ class Admin extends CI_Controller
                 $this->session->set_flashdata(
                     'message',
                     '<div class="alert alert-success" role="alert">
-                        Data Lokasi berhasil di-edit !
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                    Data Lokasi berhasil di-edit !
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
                     </div>'
                 );
                 redirect('Admin/shipping');
@@ -379,10 +589,10 @@ class Admin extends CI_Controller
                 $this->session->set_flashdata(
                     'message',
                     '<div class="alert alert-danger" role="alert">
-                        Data Lokasi gagal di-edit !
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                    Data Lokasi gagal di-edit !
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
                     </div>'
                 );
                 redirect('Admin/shipping');
@@ -397,118 +607,140 @@ class Admin extends CI_Controller
         $this->db->where('id_ongkir', $where);
         $this->db->delete('ongkir');
         $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">
-            Hapus Data Ongkir Berhasil
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>');
+        Hapus Data Ongkir Berhasil
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+        </div>');
         redirect('Admin/shipping');
     }
 
     public function data_kategori()
     {
-        $this->form_validation->set_rules('tempat_kirim', 'Tempat Kirim', 'required|trim', [
-            'tempat_kirim' => '%s tidak boleh kosong',
+        $this->form_validation->set_rules('nama_category', 'Nama Kategori', 'required|trim', [
+            'required' => '%s tidak boleh kosong',
         ]);
-        $this->form_validation->set_rules('tarif', 'Tarif', 'required|trim');
 
         if ($this->form_validation->run() == false) {
             $data['title'] = 'Data Kategori';
             $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
-            $data['shipping'] = $this->dam->shipping();
+            $data['category'] = $this->dam->category();
 
             $this->load->view('templates/admin/header', $data);
             $this->load->view('templates/admin/sidebar', $data);
             $this->load->view('templates/admin/navbar', $data);
-            $this->load->view('admin/ongkir', $data);
+            $this->load->view('admin/kategori', $data);
             $this->load->view('templates/admin/footer', $data);
         } else {
             // cek jika ada gambar
             $data = [
-                'tempat_kirim' => $this->input->post('tempat_kirim'),
-                'tarif' => $this->input->post('tarif'),
+                'nama_category' => $this->input->post('nama_category'),
             ];
 
-            $this->db->insert('ongkir', $data);
+            $this->db->insert('category', $data);
 
             $this->session->set_flashdata(
                 'message',
                 '<div class="alert alert-success" role="alert">
-                Data Ongkir berhasil ditambahkan !
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-            </div>'
+                Data Kategori berhasil ditambahkan !
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+                </div>'
             );
-            redirect('Admin/shipping');
+            redirect('Admin/data_kategori');
         }
     }
 
     public function edit_kategori()
     {
-        $this->form_validation->set_rules('tempat_kirim', 'Tempat Kirim', 'required|trim', [
-            'tempat_kirim' => '%s tidak boleh kosong',
+        $this->form_validation->set_rules('nama_category', 'Nama Kategori', 'required|trim', [
+            'required' => '%s tidak boleh kosong',
         ]);
-        $this->form_validation->set_rules('tarif', 'Tarif', 'required|trim');
 
         if ($this->form_validation->run() == false) {
-            $data['title'] = 'Data Lokasi';
+            $data['title'] = 'Data Kategori';
             $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
-            $data['shipping'] = $this->dam->shipping();
+            $data['category'] = $this->dam->category();
 
             $this->load->view('templates/admin/header', $data);
             $this->load->view('templates/admin/sidebar', $data);
             $this->load->view('templates/admin/navbar', $data);
-            $this->load->view('admin/ongkir', $data);
+            $this->load->view('admin/kategori', $data);
             $this->load->view('templates/admin/footer', $data);
         } else {
             $id = $this->input->post('id');
             $data = [
-                'tempat_kirim' => $this->input->post('tempat_kirim'),
-                'tarif' => $this->input->post('tarif'),
+                'nama_category' => $this->input->post('nama_category'),
             ];
 
-            $this->db->where('id_ongkir', $id);
+            $this->db->where('id_category', $id);
 
-            $query = $this->db->update('ongkir', $data);
+            $query = $this->db->update('category', $data);
             if ($query) {
                 $this->session->set_flashdata(
                     'message',
                     '<div class="alert alert-success" role="alert">
-                        Data Lokasi berhasil di-edit !
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                    Data Kategori berhasil di-edit !
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
                     </div>'
                 );
-                redirect('Admin/shipping');
+                redirect('Admin/data_kategori');
             } else {
                 $this->session->set_flashdata(
                     'message',
                     '<div class="alert alert-danger" role="alert">
-                        Data Lokasi gagal di-edit !
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                    Data Kategori gagal di-edit !
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
                     </div>'
                 );
-                redirect('Admin/shipping');
+                redirect('Admin/data_kategori');
             }
         }
     }
 
     public function delete_kategori()
     {
+        $where =  $this->input->get('id');
+
+        $this->db->where('id_category', $where);
+        $this->db->delete('category');
+        $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">
+        Hapus Data Kategori Berhasil
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+        </div>');
+        redirect('Admin/data_kategori');
     }
 
     //Riwayat Penjualan
+    public function transaksi()
+    {
+        $data['title'] = 'Transaksi';
+        $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
+
+        //tampilkan data Produk sesuai user
+        $data['riwayat_trans'] = $this->dam->riwayat_transaksi();
+
+        $this->load->view('templates/admin/header', $data);
+        $this->load->view('templates/admin/sidebar', $data);
+        $this->load->view('templates/admin/navbar', $data);
+        $this->load->view('admin/transaksi', $data);
+        $this->load->view('templates/admin/footer', $data);
+    }
+
     public function riwayat_transaksi()
     {
         $data['title'] = 'Riwayat Transaksi';
         $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
 
-        //tampilkan data tanaman sesuai user
-        $data['riwayat_penjualan'] = $this->dam->riwayat_transaksi();
+        //tampilkan data Produk sesuai user
+        $data['riwayat_trans'] = $this->dam->riwayat_transaksi();
 
         $this->load->view('templates/admin/header', $data);
         $this->load->view('templates/admin/sidebar', $data);
@@ -517,6 +749,116 @@ class Admin extends CI_Controller
         $this->load->view('templates/admin/footer', $data);
     }
 
+    public function add_orders()
+    {
+        $this->form_validation->set_rules('harga_user', 'Harga User', 'required|trim', [
+            'required' => '%s tidak boleh kosong !'
+        ]);
+        $this->form_validation->set_rules('stok', 'Jumlah', 'required|trim', [
+            'required' => '%s tidak boleh kosong !'
+        ]);
+
+        if ($this->form_validation->run() == false) {
+            $data['title'] = 'Data Produk';
+            $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
+            $data['data_product'] = $this->dsm->product();
+            $data['shipping'] = $this->dam->shipping();
+            $data['category'] = $this->dam->category();
+            $data['code'] = $this->Kode();
+
+            $this->load->view('templates/admin/header', $data);
+            $this->load->view('templates/admin/sidebar', $data);
+            $this->load->view('templates/admin/navbar', $data);
+            $this->load->view('admin/data_produk', $data);
+            $this->load->view('templates/admin/footer', $data);
+        } else {
+            $data = [
+                'kode_transaksi' => $this->input->post('kode_transaksi'),
+                'nama_produk' => $this->input->post('nama_produk'),
+                'satuan' => $this->input->post('satuan'),
+                'harga_beli' => $this->input->post('harga_beli'),
+                'harga_user' => $this->input->post('harga_user'),
+                'berat' => $this->input->post('berat'),
+                'stok' => $this->input->post('stok'),
+                'gambar' => $this->input->post('gambar'),
+                'keterangan' => $this->input->post('keterangan'),
+                'username' => $this->input->post('username'),
+                'waktu_input' => $this->input->post('waktu_input'),
+                'id_ongkir' => $this->input->post('id_ongkir'),
+                'id_category' => $this->input->post('id_category'),
+                'id_pembeli' => $this->session->userdata('id_user'),
+                'id_penjual' => $this->input->post('penjual_id'),
+                'id_product' => $this->input->post('id'),
+            ];
+            $query = $this->db->insert('orders', $data);
+            $id = $this->db->insert_id();
+            if ($query) {
+                $data = [
+                    'id_order' => $id,
+                    'id_product' => $this->input->post('id'),
+                    'harga_pesan' => $this->input->post('harga_user'),
+                    'jumlah_pesan' => $this->input->post('stok'),
+                    'satuan' => $this->input->post('satuan'),
+                ];
+                $query1 = $this->db->insert('orderdetails', $data);
+                if ($query1) {
+                    $data = [
+                        'id_product' => $this->input->post('id'),
+                        'nama_produk' => $this->input->post('nama_produk'),
+                        'berat' => $this->input->post('berat'),
+                        'stok' => $this->input->post('stok'),
+                        'gambar' => $this->input->post('gambar'),
+                    ];
+                    $query2 = $this->db->insert('barang_keluar', $data);
+                    if ($query2) {
+                        $this->session->set_flashdata(
+                            'message',
+                            '<div class="alert alert-success" role="alert">
+                            Data Order berhasil ditambahkan !
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                        </div>'
+                        );
+                        redirect('Admin/riwayat_transaksi');
+                    } else {
+                        $this->session->set_flashdata(
+                            'message',
+                            '<div class="alert alert-danger" role="alert">
+                            Data Order gagal ditambahkan !
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                        </div>'
+                        );
+                        redirect('Admin/riwayat_transaksi');
+                    }
+                } else {
+                    $this->session->set_flashdata(
+                        'message',
+                        '<div class="alert alert-danger" role="alert">
+                        Data Order gagal ditambahkan (barang keluar) !
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                    </div>'
+                    );
+                    redirect('Admin/riwayat_transaksi');
+                }
+            } else {
+                $this->session->set_flashdata(
+                    'message',
+                    '<div class="alert alert-danger" role="alert">
+                    Data Order (details) gagal ditambahkan !
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>'
+                );
+                redirect('Admin/riwayat_transaksi');
+            }
+        }
+    }
 
 
 

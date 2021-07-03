@@ -4,8 +4,8 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header-success">
-                        <h4 class="card-title">Data Produk</h4>
-                        <p class="card-category">Data Produk mlijo.site</p>
+                        <h4 class="card-title">Transaksi</h4>
+                        <p class="card-category">Transaksi mlijo.site</p>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -34,6 +34,7 @@
                                         <th>Lokasi</th>
                                         <th>Tarif</th>
                                         <th>Kategori</th>
+                                        <th>Status</th>
                                         <th>Tanggal</th>
                                         <th class="text-center">Opsi</th>
                                     </tr>
@@ -41,77 +42,85 @@
                                 <tbody>
                                     <?php
                                     $no = 1;
-                                    foreach ($data_product as $datprd) : ?>
-                                        <tr>
-                                            <td><?= $no ?></td>
-                                            <td>
-                                                <?= $datprd['nama_produk']; ?>
-                                            </td>
-                                            <td>
-                                                <?= $datprd['satuan']; ?>
-                                            </td>
-                                            <td>
-                                                <?= $datprd['harga_beli']; ?>
-                                            </td>
-                                            <td>
-                                                <?= $datprd['harga_user']; ?>
-                                            </td>
-                                            <td>
-                                                <?= $datprd['berat']; ?>
-                                            </td>
-                                            <td>
-                                                <?= $datprd['stok']; ?>
-                                            </td>
-                                            <td>
-                                                <div class="row justify-content-center">
-                                                    <div class="card" style="width: 10rem;">
-                                                        <img src="<?= base_url('assets/img/produk/') . $datprd['gambar']; ?>" class="img-thumbnail" alt="plant-pict">
+                                    foreach ($riwayat_trans as $rwt) : ?>
+                                        <?php if ($rwt['status'] == 0) : ?>
+                                            <tr>
+                                                <td><?= $no ?></td>
+                                                <td>
+                                                    <?= $rwt['nama_produk']; ?>
+                                                </td>
+                                                <td>
+                                                    <?= $rwt['satuan']; ?>
+                                                </td>
+                                                <td>
+                                                    <?= $rwt['harga_beli']; ?>
+                                                </td>
+                                                <td>
+                                                    <?= $rwt['harga_user']; ?>
+                                                </td>
+                                                <td>
+                                                    <?= $rwt['berat']; ?>
+                                                </td>
+                                                <td>
+                                                    <?= $rwt['stok']; ?>
+                                                </td>
+                                                <td>
+                                                    <div class="row justify-content-center">
+                                                        <div class="card" style="width: 10rem;">
+                                                            <img src="<?= base_url('assets/img/produk/') . $rwt['gambar']; ?>" class="img-thumbnail" alt="plant-pict">
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <?= $datprd['keterangan']; ?>
-                                            </td>
-                                            <td>
-                                                <?= $datprd['username']; ?>
-                                            </td>
-                                            <td>
-                                                <?= $datprd['tempat_kirim']; ?>
-                                            </td>
-                                            <td>
-                                                <?= $datprd['tarif']; ?>
-                                            </td>
-                                            <td>
-                                                <?= $datprd['nama_category']; ?>
-                                            </td>
-                                            <td>
-                                                <?= date('d M Y', strtotime($datprd['waktu_input'])); ?>
-                                            </td>
-                                            <td>
-                                                <div class="row justify-content-center">
-                                                    <!-- <div class="col-lg-6">
-                                                        <a href="#edit-data-tanaman" class="badge badge-warning" role="badge" data-id="<?= $datprd['id_product']; ?>" data-nama="<?= $datprd['nama_produk']; ?>" data-satuan="<?= $datprd['satuan']; ?>" data-harbe="<?= $datprd['harga_beli'] ?>" data-harser="<?= $datprd['harga_user']; ?>" data-berat="<?= $datprd['berat']; ?>" data-gambar="<?= $datprd['gambar']; ?>" data-ket="<?= $datprd['keterangan']; ?>" data-toggle="modal">
+                                                </td>
+                                                <td>
+                                                    <?= $rwt['keterangan']; ?>
+                                                </td>
+                                                <td>
+                                                    <?= $rwt['username']; ?>
+                                                </td>
+                                                <td>
+                                                    <?= $rwt['tempat_kirim']; ?>
+                                                </td>
+                                                <td>
+                                                    <?= $rwt['tarif']; ?>
+                                                </td>
+                                                <td>
+                                                    <?= $rwt['nama_category']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php if ($rwt['status'] == 0) : ?>
+                                                        Proses
+                                                    <?php elseif ($rwt['status'] == 1) : ?>
+                                                        Dikirim
+                                                    <?php elseif ($rwt['status'] == 2) : ?>
+                                                        Dijalan
+                                                    <?php else : ?>
+                                                        Selesai
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td>
+                                                    <?= date('d M Y', strtotime($rwt['waktu_input'])); ?>
+                                                </td>
+                                                <td>
+                                                    <div class="row justify-content-center">
+                                                        <!-- <div class="col-lg-6">
+                                                        <a href="#edit-data-tanaman" class="badge badge-warning" role="badge" data-id="<?= $rwt['id_product']; ?>" data-nama="<?= $rwt['nama_produk']; ?>" data-satuan="<?= $rwt['satuan']; ?>" data-harbe="<?= $rwt['harga_beli'] ?>" data-harser="<?= $rwt['harga_user']; ?>" data-berat="<?= $rwt['berat']; ?>" data-gambar="<?= $rwt['gambar']; ?>" data-ket="<?= $rwt['keterangan']; ?>" data-toggle="modal">
                                                             <i class="fa fa-edit"></i>Edit
                                                         </a>
                                                     </div> -->
-                                                    <div class="col-xxl-6 mr-2">
-                                                        <a href="#pesan<?= $datprd['id_product'] ?>" class="badge badge-info" data-toggle="modal">
-                                                            <i class="fa fa-edit"></i>Pesan
-                                                        </a>
+                                                        <div class="col-xxl-6 mr-2">
+                                                            <a href="#edit<?= $rwt['id_product'] ?>" class="badge badge-info" data-toggle="modal">
+                                                                <i class="fa fa-edit"></i>Edit
+                                                            </a>
+                                                        </div>
+                                                        <div class="col-xxl-6 mr-2">
+                                                            <a href="#lihat<?= $rwt['id_product'] ?>" class="badge badge-info" data-toggle="modal">
+                                                                <i class="fa fa-info-circle"></i> Lihat
+                                                            </a>
+                                                        </div>
                                                     </div>
-                                                    <div class="col-xxl-6 mr-2">
-                                                        <a href="#delete<?= $datprd['id_product'] ?>" class="badge badge-danger" data-toggle="modal">
-                                                            <i class="fa fa-edit"></i>Delete
-                                                        </a>
-                                                    </div>
-                                                    <div class="col-xxl-6 mr-2">
-                                                        <a href="#lihat<?= $datprd['id_product'] ?>" class="badge badge-info" data-toggle="modal">
-                                                            <i class="fa fa-info-circle"></i> Lihat
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                                </td>
+                                            </tr>
+                                        <?php endif; ?>
                                     <?php
                                         $no++;
                                     endforeach; ?>
@@ -121,9 +130,9 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button class="btn btn-info" data-toggle="modal" data-target="#tambah">
+                        <!-- <button class="btn btn-info" data-toggle="modal" data-target="#tambah">
                             <i class="fa fa-plus-circle"></i> Tambah
-                        </button>
+                        </button> -->
                     </div>
                 </div>
             </div>
@@ -225,25 +234,26 @@
 
 
 
-        <!-- Modal Pesan -->
-        <?php foreach ($data_product as $datprd) : ?>
-            <div class="modal fade" id="pesan<?= $datprd['id_product']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+        <!-- Modal Edit -->
+        <?php foreach ($riwayat_trans as $rwt) : ?>
+            <div class="modal fade" id="edit<?= $rwt['id_product']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header bg-success">
-                            <h4 class="modal-title">Pesan <?= $title ?></h4>
+                            <h4 class="modal-title">Edit <?= $title ?></h4>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form action="<?= base_url('Admin/add_orders'); ?>" method="post">
+                        <form action="<?= base_url('Penjual/transaksi'); ?>" method="post">
                             <div class="modal-body">
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <input type="hidden" name="id" id="id" value="<?= $datprd['id_product']; ?>">
-                                                <input type="hidden" name="penjual_id" id="penjual_id" value="<?= $datprd['id_user']; ?>">
+                                                <input type="hidden" name="id_order" id="id_order" value="<?= $rwt['id_order']; ?>">
+                                                <input type="hidden" name="id" id="id" value="<?= $rwt['id_product']; ?>">
+                                                <input type="hidden" name="penjual_id" id="penjual_id" value="<?= $rwt['id_penjual']; ?>">
                                                 <div class="form-group">
                                                     <label for="Kode">Kode Transaksi</label>
                                                     <br>
@@ -252,32 +262,32 @@
                                                 <div class="form-group">
                                                     <label for="Nama">Nama Produk</label>
                                                     <br>
-                                                    <input type="text" class="form-control" name="nama_produk" id="nama_produk" value="<?= $datprd['nama_produk']; ?>" readonly>
+                                                    <input type="text" class="form-control" name="nama_produk" id="nama_produk" value="<?= $rwt['nama_produk']; ?>" readonly>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Jenis">Satuan</label>
                                                     <br>
-                                                    <input type="text" class="form-control" name="satuan" id="satuan" value="<?= $datprd['satuan']; ?>" readonly>
+                                                    <input type="text" class="form-control" name="satuan" id="satuan" value="<?= $rwt['satuan']; ?>" readonly>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Warna">Harga Beli</label>
                                                     <br>
-                                                    <input type="text" class="form-control" name="harga_beli" id="harga_beli" value="<?= $datprd['harga_beli']; ?>" readonly>
+                                                    <input type="text" class="form-control" name="harga_beli" id="harga_beli" value="<?= $rwt['harga_beli']; ?>" readonly>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Harga">Harga User</label>
                                                     <br>
-                                                    <input type="text" class="form-control" name="harga_user" id="harga_user" value="<?= $datprd['harga_user']; ?>">
+                                                    <input type="text" class="form-control" name="harga_user" id="harga_user" value="<?= $rwt['harga_user']; ?>" readonly>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Berat">Berat</label>
                                                     <br>
-                                                    <input type="number" class="form-control" name="berat" id="berat" value="<?= $datprd['berat']; ?>" readonly>
+                                                    <input type="number" class="form-control" name="berat" id="berat" value="<?= $rwt['berat']; ?>" readonly>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Berat">Stok</label>
                                                     <br>
-                                                    <input type="number" class="form-control" name="stok" id="stok" value="<?= $datprd['stok']; ?>">
+                                                    <input type="number" class="form-control" name="stok" id="stok" value="<?= $rwt['stok']; ?>" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
@@ -287,8 +297,8 @@
                                                     <div class="input-group">
                                                         <div class="row">
                                                             <div class="col-lg-9">
-                                                                <img src="<?= base_url('assets/img/produk/') . $datprd['gambar']; ?>" class="img-thumbnail" alt="plant-pict">
-                                                                <input type="hidden" class="form-control" name="gambar" id="gambar" value="<?= $datprd['gambar']; ?>">
+                                                                <img src="<?= base_url('assets/img/produk/') . $rwt['gambar']; ?>" class="img-thumbnail" alt="plant-pict">
+                                                                <input type="hidden" class="form-control" name="gambar" id="gambar" value="<?= $rwt['gambar']; ?>">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -296,33 +306,51 @@
                                                 <div class="form-group">
                                                     <label for="Keterangan">Keterangan</label>
                                                     <br>
-                                                    <input type="text" class="form-control" name="keterangan" id="keterangan" value="<?= $datprd['keterangan']; ?>" readonly>
+                                                    <input type="text" class="form-control" name="keterangan" id="keterangan" value="<?= $rwt['keterangan']; ?>" readonly>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Username">Username</label>
                                                     <br>
-                                                    <input type="text" class="form-control" name="username" id="username" value="<?= $datprd['username']; ?>" readonly>
+                                                    <input type="text" class="form-control" name="username" id="username" value="<?= $rwt['username']; ?>" readonly>
                                                 </div>
                                                 <div class="form-group">
                                                     <div class="form-group">
                                                         <label for="Lokasi">Lokasi</label>
-                                                        <br>
-                                                        <input type="hidden" class="form-control" name="id_ongkir" id="id_ongkir" value="<?= $datprd['id_ongkir'] ?>">
-                                                        <input type="text" class="form-control" name="" id="" value="<?= $datprd['tempat_kirim'] ?>" readonly>
+                                                        <select class="form-control" data-style="btn btn-link" name="id_ongkir" id="id_ongkir" disabled>
+                                                            <option value="<?= $rwt['id_ongkir'] ?>"><?= $rwt['tempat_kirim']; ?></option>
+                                                            <?php foreach ($shipping as $rows) : ?>
+                                                                <option value="<?= $rows['id_ongkir']; ?>"><?= $rows['id_ongkir'] . ' - ' . $rows['tempat_kirim']; ?></option>
+                                                            <?php endforeach; ?>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <div class="form-group">
                                                         <label for="Kategori">Kategori</label>
-                                                        <br>
-                                                        <input type="hidden" class="form-control" name="id_category" id="id_category" value="<?= $datprd['id_category'] ?>">
-                                                        <input type="text" class="form-control" name="" id="" value="<?= $datprd['nama_category'] ?>" readonly>
+                                                        <select class="form-control" data-style="btn btn-link" name="id_category" id="id_category" disabled>
+                                                            <option value="<?= $rwt['id_category'] ?>"><?= $rwt['nama_category']; ?></option>
+                                                            <?php foreach ($category as $data) : ?>
+                                                                <option value="<?= $data['id_category']; ?>"><?= $data['id_category'] . ' - ' . $data['nama_category']; ?></option>
+                                                            <?php endforeach; ?>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Tanggal">Tanggal</label>
                                                     <br>
-                                                    <input type="date" class="form-control" name="waktu_input" id="waktu_input" value="<?= date('Y-m-d', strtotime($datprd['waktu_input'])); ?>" readonly>
+                                                    <input type="date" class="form-control" name="waktu_input" id="waktu_input" value="<?= date('Y-m-d', strtotime($rwt['waktu_input'])); ?>" readonly>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="Status">Status</label>
+                                                    <br>
+                                                    <select class="form-control" data-style="btn btn-link" name="status" id="status">
+                                                        <option value="<?= $rwt['status'] ?>">
+                                                            <?= ($rwt['status'] == 1 ? 'Dikirim' : ($rwt['status'] == 2 ? 'Dijalan' : ($rwt['status'] == 3 ? 'Selesai' : 'Proses')))  ?>
+                                                        </option>
+                                                        <option value="1">Dikirim</option>
+                                                        <option value="2">Dijalan</option>
+                                                        <option value="3">Selesai</option>
+                                                    </select>
                                                 </div>
                                                 <p class="text-center">Apakah anda yakin menambahkan item ini?</p>
                                             </div>
@@ -345,8 +373,8 @@
 
 
         <!-- Modal Lihat -->
-        <?php foreach ($data_product as $datprd) : ?>
-            <div class="modal fade" id="lihat<?= $datprd['id_product']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+        <?php foreach ($riwayat_trans as $rwt) : ?>
+            <div class="modal fade" id="lihat<?= $rwt['id_product']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header bg-success">
@@ -358,28 +386,28 @@
                         <div class="modal-body">
                             <div class="card card-nav-tabs justify-content-center">
                                 <div class="card-header card-header-info">
-                                    <?= $datprd['nama_produk']; ?>
+                                    <?= $rwt['nama_produk']; ?>
                                 </div>
                                 <ul class="list-group list-group-flush">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <li class="list-group-item">Nama &nbsp;:&nbsp;<?= $datprd['nama_produk']; ?></li>
-                                            <li class="list-group-item">Satuan &nbsp;:&nbsp;<?= $datprd['satuan']; ?></li>
-                                            <li class="list-group-item">Harga Beli &nbsp;:&nbsp;<?= $datprd['harga_beli']; ?></li>
-                                            <li class="list-group-item">Harga User &nbsp;:&nbsp;<?= $datprd['harga_user']; ?></li>
-                                            <li class="list-group-item">Berat &nbsp;:&nbsp;<?= $datprd['berat']; ?></li>
-                                            <li class="list-group-item">Stok &nbsp;:&nbsp;<?= $datprd['stok']; ?></li>
+                                            <li class="list-group-item">Nama &nbsp;:&nbsp;<?= $rwt['nama_produk']; ?></li>
+                                            <li class="list-group-item">Satuan &nbsp;:&nbsp;<?= $rwt['satuan']; ?></li>
+                                            <li class="list-group-item">Harga Beli &nbsp;:&nbsp;<?= $rwt['harga_beli']; ?></li>
+                                            <li class="list-group-item">Harga User &nbsp;:&nbsp;<?= $rwt['harga_user']; ?></li>
+                                            <li class="list-group-item">Berat &nbsp;:&nbsp;<?= $rwt['berat']; ?></li>
+                                            <li class="list-group-item">Stok &nbsp;:&nbsp;<?= $rwt['stok']; ?></li>
                                         </div>
                                         <div class="col-md-6">
                                             <li class="list-group-item">Gambar
                                                 <div class="card" style="width: 10rem;">
-                                                    <img src="<?= base_url('assets/img/produk/') . $datprd['gambar']; ?>" class="img-thumbnail" alt="plant-pict">
+                                                    <img src="<?= base_url('assets/img/produk/') . $rwt['gambar']; ?>" class="img-thumbnail" alt="plant-pict">
                                                 </div>
                                             </li>
-                                            <li class="list-group-item">Keterangan &nbsp;:&nbsp;<?= $datprd['keterangan']; ?></li>
-                                            <li class="list-group-item">Username &nbsp;:&nbsp;<?= $datprd['username']; ?></li>
-                                            <li class="list-group-item">Lokasi &nbsp;:&nbsp;<?= $datprd['tempat_kirim']; ?></li>
-                                            <li class="list-group-item">Tanggal &nbsp;:&nbsp;<?= date('D, m Y', strtotime($datprd['waktu_input'])); ?></li>
+                                            <li class="list-group-item">Keterangan &nbsp;:&nbsp;<?= $rwt['keterangan']; ?></li>
+                                            <li class="list-group-item">Username &nbsp;:&nbsp;<?= $rwt['username']; ?></li>
+                                            <li class="list-group-item">Lokasi &nbsp;:&nbsp;<?= $rwt['tempat_kirim']; ?></li>
+                                            <li class="list-group-item">Tanggal &nbsp;:&nbsp;<?= date('D, m Y', strtotime($rwt['waktu_input'])); ?></li>
                                         </div>
                                     </div>
                                 </ul>
@@ -398,8 +426,8 @@
 
 
         <!-- Modal Delete -->
-        <?php foreach ($data_product as $datprd) : ?>
-            <div class="modal fade" id="delete<?= $datprd['id_product']; ?>">
+        <?php foreach ($riwayat_trans as $rwt) : ?>
+            <div class="modal fade" id="delete<?= $rwt['id_product']; ?>">
                 <div class=" modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header bg-success">
@@ -410,7 +438,7 @@
                         </div>
                         <form action="<?= base_url('Admin/delete_produk'); ?>" method="get">
                             <div class="modal-body">
-                                <input type="hidden" name="id" id="id" value="<?= $datprd['id_product']; ?>">
+                                <input type="hidden" name="id" id="id" value="<?= $rwt['id_product']; ?>">
                                 <p class="text-center">Apakah anda yakin data ini dihapus?</p>
                             </div>
                             <div class="modal-footer justify-content-end">

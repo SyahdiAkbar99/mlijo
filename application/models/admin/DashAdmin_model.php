@@ -70,7 +70,9 @@ class DashAdmin_model extends CI_Model
     public function riwayat_transaksi()
     {
         $query = "SELECT * FROM orderdetails
-                    JOIN orders ON orderdetails.id_order = orders.id_order";
+                    JOIN orders ON orderdetails.id_order = orders.id_order
+                    JOIN category ON orders.id_category = category.id_category
+                    JOIN ongkir ON orders.id_ongkir = ongkir.id_ongkir";
         return $this->db->query($query)->result_array();
     }
 
@@ -79,5 +81,56 @@ class DashAdmin_model extends CI_Model
     {
         $query = "SELECT * FROM ongkir ORDER BY ongkir.id_ongkir DESC";
         return $this->db->query($query)->result_array();
+    }
+
+    //Data Kategori
+    public function category()
+    {
+        $query = "SELECT * FROM category ORDER BY category.id_category DESC";
+        return $this->db->query($query)->result_array();
+    }
+
+    //Transaksi keseluruhan
+    public function getOrderMonthly()
+    {
+        $query = "SELECT COUNT(orders.kode_transaksi) AS sumtran, DATE_FORMAT(orders.waktu_input, '%M %Y') AS bulan
+        FROM orders
+              
+              GROUP BY MONTH(orders.waktu_input)
+              HAVING COUNT(orders.kode_transaksi)
+              ORDER BY orders.waktu_input ASC";
+
+        $getOrderPerMonth = $this->db->query($query)->result_array();
+
+        return $getOrderPerMonth;
+    }
+
+    //Transaksi Selesai
+    public function getOrderFinish()
+    {
+        $query = "SELECT COUNT(orders.kode_transaksi) AS sumtran, DATE_FORMAT(orders.waktu_input, '%M %Y') AS bulan
+         FROM orders
+            WHERE orders.status = 3
+               GROUP BY MONTH(orders.waktu_input)
+               HAVING COUNT(orders.kode_transaksi)
+               ORDER BY orders.waktu_input ASC";
+
+        $getOrderFinish = $this->db->query($query)->result_array();
+
+        return $getOrderFinish;
+    }
+
+    //Transaksi Selesai
+    public function getOrderOngkir()
+    {
+        $query = "SELECT COUNT(ongkir.tempat_kirim) AS sumrim
+           FROM ongkir
+                 GROUP BY MONTH(ongkir.id_ongkir)
+                 HAVING COUNT(ongkir.id_ongkir)
+                 ORDER BY ongkir.id_ongkir ASC";
+
+        $getOrderOngkir = $this->db->query($query)->result_array();
+
+        return $getOrderOngkir;
     }
 }

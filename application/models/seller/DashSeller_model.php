@@ -13,7 +13,8 @@ class DashSeller_model extends CI_Model
     public function product()
     {
         $query = "SELECT * FROM product
-                    JOIN ongkir ON product.id_ongkir = ongkir.id_ongkir";
+                    JOIN ongkir ON product.id_ongkir = ongkir.id_ongkir
+                    JOIN category ON product.id_category = category.id_category";
         return $this->db->query($query)->result_array();
     }
     public function insert_product($data)
@@ -31,6 +32,13 @@ class DashSeller_model extends CI_Model
     {
         $query = "SELECT * FROM detail_transaksi
                     JOIN transaksi ON detail_transaksi.transaksi_id = transaksi.id WHERE detail_transaksi.seller_id = $id";
+        return $this->db->query($query)->result_array();
+    }
+
+    //Data barang keluar
+    public function barang_keluar()
+    {
+        $query = "SELECT * FROM barang_keluar ORDER BY barang_keluar.id DESC";
         return $this->db->query($query)->result_array();
     }
 }

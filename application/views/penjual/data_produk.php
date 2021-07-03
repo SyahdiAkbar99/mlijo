@@ -95,8 +95,8 @@
                                                         </a>
                                                     </div> -->
                                                     <div class="col-xxl-6 mr-2">
-                                                        <a href="#pesan<?= $datprd['id_product'] ?>" class="badge badge-info" data-toggle="modal">
-                                                            <i class="fa fa-edit"></i>Pesan
+                                                        <a href="#edit<?= $datprd['id_product'] ?>" class="badge badge-info" data-toggle="modal">
+                                                            <i class="fa fa-edit"></i>Edit
                                                         </a>
                                                     </div>
                                                     <div class="col-xxl-6 mr-2">
@@ -139,7 +139,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form action="<?= base_url('Admin/data_produk'); ?>" method="post" enctype="multipart/form-data">
+                    <form action="<?= base_url('Penjual/data_produk'); ?>" method="post" enctype="multipart/form-data">
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-md-6">
@@ -225,18 +225,18 @@
 
 
 
-        <!-- Modal Pesan -->
+        <!-- Modal Edit -->
         <?php foreach ($data_product as $datprd) : ?>
-            <div class="modal fade" id="pesan<?= $datprd['id_product']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div class="modal fade" id="edit<?= $datprd['id_product']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header bg-success">
-                            <h4 class="modal-title">Pesan <?= $title ?></h4>
+                            <h4 class="modal-title">Edit <?= $title ?></h4>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form action="<?= base_url('Admin/add_orders'); ?>" method="post">
+                        <form action="<?= base_url('Penjual/edit_produk'); ?>" method="post" enctype="multipart/form-data">
                             <div class="modal-body">
                                 <div class="card">
                                     <div class="card-body">
@@ -252,17 +252,17 @@
                                                 <div class="form-group">
                                                     <label for="Nama">Nama Produk</label>
                                                     <br>
-                                                    <input type="text" class="form-control" name="nama_produk" id="nama_produk" value="<?= $datprd['nama_produk']; ?>" readonly>
+                                                    <input type="text" class="form-control" name="nama_produk" id="nama_produk" value="<?= $datprd['nama_produk']; ?>">
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Jenis">Satuan</label>
                                                     <br>
-                                                    <input type="text" class="form-control" name="satuan" id="satuan" value="<?= $datprd['satuan']; ?>" readonly>
+                                                    <input type="text" class="form-control" name="satuan" id="satuan" value="<?= $datprd['satuan']; ?>">
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Warna">Harga Beli</label>
                                                     <br>
-                                                    <input type="text" class="form-control" name="harga_beli" id="harga_beli" value="<?= $datprd['harga_beli']; ?>" readonly>
+                                                    <input type="text" class="form-control" name="harga_beli" id="harga_beli" value="<?= $datprd['harga_beli']; ?>">
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Harga">Harga User</label>
@@ -272,7 +272,7 @@
                                                 <div class="form-group">
                                                     <label for="Berat">Berat</label>
                                                     <br>
-                                                    <input type="number" class="form-control" name="berat" id="berat" value="<?= $datprd['berat']; ?>" readonly>
+                                                    <input type="number" class="form-control" name="berat" id="berat" value="<?= $datprd['berat']; ?>">
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Berat">Stok</label>
@@ -281,48 +281,51 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="Gambar">Gambar</label>
-                                                    <br>
+                                                <!-- <div class="form-group">
+                                                    <label for="Gambar" class="">Gambar</label>
                                                     <div class="input-group">
-                                                        <div class="row">
-                                                            <div class="col-lg-9">
-                                                                <img src="<?= base_url('assets/img/produk/') . $datprd['gambar']; ?>" class="img-thumbnail" alt="plant-pict">
-                                                                <input type="hidden" class="form-control" name="gambar" id="gambar" value="<?= $datprd['gambar']; ?>">
-                                                            </div>
+                                                        <div class="custom-file">
+                                                            <input type="file" name="image" class="custom-file-input" id="image">
+                                                            <label class="custom-file-label" for="image">Pilih Gambar</label>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                                 <div class="form-group">
                                                     <label for="Keterangan">Keterangan</label>
                                                     <br>
-                                                    <input type="text" class="form-control" name="keterangan" id="keterangan" value="<?= $datprd['keterangan']; ?>" readonly>
+                                                    <input type="text" class="form-control" name="keterangan" id="keterangan" value="<?= $datprd['keterangan']; ?>">
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Username">Username</label>
                                                     <br>
-                                                    <input type="text" class="form-control" name="username" id="username" value="<?= $datprd['username']; ?>" readonly>
+                                                    <input type="text" class="form-control" name="username" id="username" value="<?= $datprd['username']; ?>">
                                                 </div>
                                                 <div class="form-group">
                                                     <div class="form-group">
                                                         <label for="Lokasi">Lokasi</label>
-                                                        <br>
-                                                        <input type="hidden" class="form-control" name="id_ongkir" id="id_ongkir" value="<?= $datprd['id_ongkir'] ?>">
-                                                        <input type="text" class="form-control" name="" id="" value="<?= $datprd['tempat_kirim'] ?>" readonly>
+                                                        <select class="form-control" data-style="btn btn-link" name="id_ongkir" id="id_ongkir">
+                                                            <option value="<?= $datprd['id_ongkir'] ?>"><?= $datprd['tempat_kirim']; ?></option>
+                                                            <?php foreach ($shipping as $rows) : ?>
+                                                                <option value="<?= $rows['id_ongkir']; ?>"><?= $rows['tempat_kirim']; ?></option>
+                                                            <?php endforeach; ?>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <div class="form-group">
                                                         <label for="Kategori">Kategori</label>
-                                                        <br>
-                                                        <input type="hidden" class="form-control" name="id_category" id="id_category" value="<?= $datprd['id_category'] ?>">
-                                                        <input type="text" class="form-control" name="" id="" value="<?= $datprd['nama_category'] ?>" readonly>
+                                                        <select class="form-control" data-style="btn btn-link" name="id_category" id="id_category">
+                                                            <option value="<?= $datprd['id_category'] ?>"><?= $datprd['nama_category']; ?></option>
+                                                            <?php foreach ($category as $data) : ?>
+                                                                <option value="<?= $data['id_category']; ?>"><?= $data['nama_category']; ?></option>
+                                                            <?php endforeach; ?>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Tanggal">Tanggal</label>
                                                     <br>
-                                                    <input type="date" class="form-control" name="waktu_input" id="waktu_input" value="<?= date('Y-m-d', strtotime($datprd['waktu_input'])); ?>" readonly>
+                                                    <input type="date" class="form-control" name="waktu_input" id="waktu_input" value="<?= date('Y-m-d', strtotime($datprd['waktu_input'])); ?>">
                                                 </div>
                                                 <p class="text-center">Apakah anda yakin menambahkan item ini?</p>
                                             </div>
@@ -408,7 +411,7 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form action="<?= base_url('Admin/delete_produk'); ?>" method="get">
+                        <form action="<?= base_url('Penjual/delete_produk'); ?>" method="get">
                             <div class="modal-body">
                                 <input type="hidden" name="id" id="id" value="<?= $datprd['id_product']; ?>">
                                 <p class="text-center">Apakah anda yakin data ini dihapus?</p>
