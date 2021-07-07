@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 03 Jul 2021 pada 16.54
+-- Waktu pembuatan: 07 Jul 2021 pada 16.28
 -- Versi server: 10.4.11-MariaDB
 -- Versi PHP: 7.3.15
 
@@ -44,7 +44,8 @@ CREATE TABLE `barang_keluar` (
 
 INSERT INTO `barang_keluar` (`id`, `id_product`, `nama_produk`, `stok`, `berat`, `gambar`, `tanggal`) VALUES
 (2, 15, 'Mentimun', 390, 301, 'letter_K.png', '2021-07-03 14:46:49'),
-(4, 17, 'Exdous11', 1500, 12111, 'letter_E1.png', '2021-07-03 14:53:52');
+(4, 17, 'Exdous11', 1500, 12111, 'letter_E1.png', '2021-07-03 14:53:52'),
+(5, 20, 'Akasa', 70, 30, 'letter_P.png', '2021-07-07 13:15:36');
 
 --
 -- Trigger `barang_keluar`
@@ -74,6 +75,26 @@ CREATE TABLE `category` (
 INSERT INTO `category` (`id_category`, `nama_category`) VALUES
 (2, 'PANGAN'),
 (3, 'FASHION');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `jadwal`
+--
+
+CREATE TABLE `jadwal` (
+  `id` int(11) NOT NULL,
+  `hari` date NOT NULL,
+  `pukul` time NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `jadwal`
+--
+
+INSERT INTO `jadwal` (`id`, `hari`, `pukul`) VALUES
+(2, '2021-07-03', '04:54:00'),
+(4, '2021-07-01', '16:34:00');
 
 -- --------------------------------------------------------
 
@@ -121,7 +142,8 @@ INSERT INTO `orderdetails` (`id_orderdetail`, `id_order`, `id_product`, `harga_p
 (5, 1, 15, 6900, 400, '5000'),
 (6, 2, 15, 6780, 390, '5000'),
 (7, 3, 17, 5900, 670, '500011'),
-(8, 4, 17, 7900, 1500, '500011');
+(8, 4, 17, 7900, 1500, '500011'),
+(9, 5, 20, 4000, 70, '3000');
 
 -- --------------------------------------------------------
 
@@ -134,8 +156,7 @@ CREATE TABLE `orders` (
   `kode_transaksi` varchar(50) NOT NULL,
   `nama_produk` varchar(128) NOT NULL,
   `satuan` int(11) NOT NULL,
-  `harga_beli` int(11) NOT NULL,
-  `harga_user` int(11) NOT NULL,
+  `harga` int(11) NOT NULL,
   `berat` int(11) NOT NULL,
   `stok` int(11) NOT NULL,
   `gambar` varchar(256) NOT NULL,
@@ -144,6 +165,7 @@ CREATE TABLE `orders` (
   `waktu_input` datetime NOT NULL,
   `id_ongkir` int(11) NOT NULL,
   `id_category` int(11) NOT NULL,
+  `id_jadwal` int(11) NOT NULL,
   `id_pembeli` int(11) NOT NULL,
   `id_penjual` int(11) NOT NULL,
   `id_product` int(11) NOT NULL,
@@ -156,10 +178,11 @@ CREATE TABLE `orders` (
 -- Dumping data untuk tabel `orders`
 --
 
-INSERT INTO `orders` (`id_order`, `kode_transaksi`, `nama_produk`, `satuan`, `harga_beli`, `harga_user`, `berat`, `stok`, `gambar`, `keterangan`, `username`, `waktu_input`, `id_ongkir`, `id_category`, `id_pembeli`, `id_penjual`, `id_product`, `bukti_bayar`, `status`, `kurir`) VALUES
-(2, '03.07.PDR/2021/001', 'Mentimun', 5000, 4500, 6780, 301, 390, 'letter_K.png', 'Baik tahan hama', 'Ely99', '2021-07-03 00:00:00', 2, 3, 15, 31, 15, NULL, 0, NULL),
-(3, '03.07.PDR/2021/002', 'Exdous11', 500011, 34001, 5900, 12111, 670, 'letter_E1.png', 'Baik tahan hama1', 'viqih1', '2021-07-02 00:00:00', 1, 3, 15, 31, 17, NULL, 0, NULL),
-(4, '03.07.PDR/2021/003', 'Exdous11', 500011, 34001, 7900, 12111, 1500, 'letter_E1.png', 'Baik tahan hama1', 'viqih1', '2021-07-02 00:00:00', 1, 3, 15, 31, 17, NULL, 0, NULL);
+INSERT INTO `orders` (`id_order`, `kode_transaksi`, `nama_produk`, `satuan`, `harga`, `berat`, `stok`, `gambar`, `keterangan`, `username`, `waktu_input`, `id_ongkir`, `id_category`, `id_jadwal`, `id_pembeli`, `id_penjual`, `id_product`, `bukti_bayar`, `status`, `kurir`) VALUES
+(2, '03.07.PDR/2021/001', 'Mentimun', 5000, 6780, 301, 390, 'letter_K.png', 'Baik tahan hama', 'Ely99', '2021-07-03 00:00:00', 2, 3, 2, 15, 31, 15, NULL, 3, NULL),
+(3, '03.07.PDR/2021/002', 'Exdous11', 500011, 5900, 12111, 670, 'letter_E1.png', 'Baik tahan hama1', 'viqih1', '2021-07-02 00:00:00', 1, 3, 4, 15, 31, 17, NULL, 0, NULL),
+(4, '03.07.PDR/2021/003', 'Exdous11', 500011, 7900, 12111, 1500, 'letter_E1.png', 'Baik tahan hama1', 'viqih1', '2021-07-02 00:00:00', 1, 3, 4, 15, 31, 17, NULL, 0, NULL),
+(5, '07.07.PDR/2021/001', 'Akasa', 3000, 4000, 30, 70, 'letter_P.png', 'Masih Segar dan utuh', 'popol', '2021-07-01 00:00:00', 2, 2, 2, 15, 33, 20, NULL, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -172,10 +195,10 @@ CREATE TABLE `product` (
   `id_produk_perusahaan` int(11) NOT NULL,
   `id_category` int(11) NOT NULL,
   `id_ongkir` int(11) NOT NULL,
+  `id_jadwal` int(11) NOT NULL,
   `nama_produk` varchar(255) NOT NULL,
   `satuan` varchar(50) NOT NULL,
-  `harga_beli` int(11) NOT NULL,
-  `harga_user` int(11) NOT NULL,
+  `harga` int(11) NOT NULL,
   `berat` int(11) NOT NULL,
   `stok` int(11) NOT NULL,
   `gambar` varchar(255) NOT NULL,
@@ -189,9 +212,12 @@ CREATE TABLE `product` (
 -- Dumping data untuk tabel `product`
 --
 
-INSERT INTO `product` (`id_product`, `id_produk_perusahaan`, `id_category`, `id_ongkir`, `nama_produk`, `satuan`, `harga_beli`, `harga_user`, `berat`, `stok`, `gambar`, `keterangan`, `username`, `waktu_input`, `id_user`) VALUES
-(15, 0, 3, 2, 'Mentimun', '5000', 4500, 5000, 301, 611, 'letter_K.png', 'Baik tahan hama', 'Ely99', '2021-07-03 00:00:00', 31),
-(17, 0, 3, 1, 'Exdous11', '500011', 34001, 50001, 12111, 21141, 'letter_E1.png', 'Baik tahan hama1', 'viqih1', '2021-07-02 00:00:00', 31);
+INSERT INTO `product` (`id_product`, `id_produk_perusahaan`, `id_category`, `id_ongkir`, `id_jadwal`, `nama_produk`, `satuan`, `harga`, `berat`, `stok`, `gambar`, `keterangan`, `username`, `waktu_input`, `id_user`) VALUES
+(15, 0, 3, 2, 4, 'Mentimun', '5000', 5000, 301, 611, 'letter_K.png', 'Baik tahan hama', 'Ely99', '2021-07-03 00:00:00', 31),
+(17, 0, 3, 1, 2, 'Exdous11', '500011', 50001, 12111, 21141, 'letter_E1.png', 'Baik tahan hama1', 'viqih1', '2021-07-02 00:00:00', 31),
+(18, 0, 3, 1, 4, 'Gamis1', '5000', 145000, 12, 200, 'letter_L.png', 'Baik tahan hama', 'Ely99', '2021-06-30 00:00:00', 15),
+(19, 0, 2, 2, 4, 'Mentimun Prey', '1000', 2000, 3, 120, 'letter_M.png', 'Baik tahan hama', 'palau', '2021-07-07 00:00:00', 31),
+(20, 0, 2, 2, 2, 'Akasa', '3000', 4000, 30, 230, 'letter_P.png', 'Masih Segar dan utuh', 'popol', '2021-07-01 00:00:00', 33);
 
 -- --------------------------------------------------------
 
@@ -222,7 +248,7 @@ CREATE TABLE `user` (
 INSERT INTO `user` (`id_user`, `id_akses`, `nama_user`, `email_user`, `no_telp`, `username`, `password`, `level`, `jenis_kelamin`, `alamat`, `tempat_lahir`, `tanggal_lahir`, `date_created`) VALUES
 (15, 1, 'admin', 'admin@gmail.com', '2147483647', 'admin', '12345', 'admin', 'laki laki', 'jenggawah', 'Jember', '2020-02-05', 0),
 (31, 2, 'pala bapak kau', 'pala@gmail.com', '083847293364', 'palau', '123', 'penjual', 'laki-laki', 'Tapal Kuda', 'Lumajang', '2021-06-01', 1624971901),
-(33, 2, 'popol', 'babeomif@gmail.com', '123243', 'popol', '123', 'penjual', '', '', '', '0000-00-00', 1587752950),
+(33, 2, 'popol', 'babeomif@gmail.com', '123243', 'popol', '123', 'penjual', '', 'Tapal Tapil', '', '0000-00-00', 1587752950),
 (35, 3, 'veqij', 'veqij@gmail.com', '6281336787990', 'veqij', '123456', 'penjual', 'laki-laki', 'JL Kemuning', 'Banyuwangi', '2021-06-21', 1624291339),
 (36, 3, 'reus', 'reus@gmail.com', '6281336787990', 'reus99', '123456', 'penjual', 'perempuan', 'JL Kemuning', 'Banyuwangi', '2021-06-21', 1624291339),
 (41, 2, 'Syahdi Akbar', 'syahdiakbar99@gmail.com', '087566234111', 'viqih', '123', 'penjual', 'laki-laki', 'Jl Kutai No 9A Tamanbaru Banyuwangi', 'Banyuwangi', '2021-06-04', 1624966927);
@@ -322,7 +348,8 @@ INSERT INTO `user_sub_menu` (`id`, `menu_id`, `title`, `url`, `icon`, `is_active
 (9, 2, 'Transaksi', 'Penjual/transaksi', 'payments', 1, 2),
 (10, 2, 'Riwayat Transaksi', 'Penjual/riwayat_transaksi', 'payments', 1, 3),
 (11, 2, 'Data Produk', 'Penjual/data_produk', 'shopping_basket', 1, 4),
-(12, 2, 'Barang Keluar', 'Penjual/barang_keluar', 'outbox', 1, 5);
+(12, 2, 'Barang Keluar', 'Penjual/barang_keluar', 'outbox', 1, 5),
+(13, 1, 'Jadwal', 'Admin/jadwal', 'event', 1, 7);
 
 --
 -- Indexes for dumped tables
@@ -339,6 +366,12 @@ ALTER TABLE `barang_keluar`
 --
 ALTER TABLE `category`
   ADD PRIMARY KEY (`id_category`);
+
+--
+-- Indeks untuk tabel `jadwal`
+--
+ALTER TABLE `jadwal`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indeks untuk tabel `ongkir`
@@ -403,13 +436,19 @@ ALTER TABLE `user_sub_menu`
 -- AUTO_INCREMENT untuk tabel `barang_keluar`
 --
 ALTER TABLE `barang_keluar`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT untuk tabel `category`
 --
 ALTER TABLE `category`
   MODIFY `id_category` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT untuk tabel `jadwal`
+--
+ALTER TABLE `jadwal`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT untuk tabel `ongkir`
@@ -421,19 +460,19 @@ ALTER TABLE `ongkir`
 -- AUTO_INCREMENT untuk tabel `orderdetails`
 --
 ALTER TABLE `orderdetails`
-  MODIFY `id_orderdetail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_orderdetail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT untuk tabel `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id_order` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_order` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT untuk tabel `product`
 --
 ALTER TABLE `product`
-  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT untuk tabel `user`
@@ -463,7 +502,7 @@ ALTER TABLE `user_role`
 -- AUTO_INCREMENT untuk tabel `user_sub_menu`
 --
 ALTER TABLE `user_sub_menu`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
