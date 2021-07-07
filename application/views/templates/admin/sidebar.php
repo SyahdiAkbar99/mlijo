@@ -1,7 +1,9 @@
-<div class="sidebar" data-color="purple" data-background-color="white" data-image="<?= base_url('assets/img/sidebar-1.jpg') ?>">
+<div class="sidebar" data-color="purple" data-background-color="white" data-image="<?= base_url('assets/img/cover.jpg') ?>">
     <div class="logo">
-        <a href="<?= base_url('Admin') ?>" class="simple-text logo-normal">
-            Mlijo
+        <a href="<?= base_url('Admin') ?>" class="simple-text logo-normal" style="margin: -20px -30px -20px -30px;">
+            <div class="card mx-auto" style="width: 4rem;">
+                <img class="card-img-top" src="<?= base_url('assets/img/favicon.png') ?>" alt="Card image cap">
+            </div>
         </a>
     </div>
     <div class="sidebar-wrapper">
@@ -62,7 +64,7 @@
                                 <?= $sm['title']; ?>
                             </p>
                             </a>
-                        </li>
+                        </li class="mb-3">
                     <?php endforeach; ?>
 
                 <?php endforeach; ?>

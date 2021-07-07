@@ -18,14 +18,13 @@
                                 </div>
                             <?php endif; ?>
                             <?= $this->session->flashdata('message') ?>
-                            <table id="data-tanaman" class="table">
+                            <table id="data-produk" class="table">
                                 <thead>
                                     <tr class="">
                                         <th>No</th>
                                         <th>Nama Produk</th>
                                         <th>Satuan</th>
-                                        <th>Harga Beli</th>
-                                        <th>Harga User</th>
+                                        <th>Harga</th>
                                         <th>Berat</th>
                                         <th>Stok</th>
                                         <th class="text-center">Gambar</th>
@@ -35,6 +34,7 @@
                                         <th>Tarif</th>
                                         <th>Kategori</th>
                                         <th>Tanggal</th>
+                                        <th>Jadwal</th>
                                         <th class="text-center">Opsi</th>
                                     </tr>
                                 </thead>
@@ -51,10 +51,7 @@
                                                 <?= $datprd['satuan']; ?>
                                             </td>
                                             <td>
-                                                <?= $datprd['harga_beli']; ?>
-                                            </td>
-                                            <td>
-                                                <?= $datprd['harga_user']; ?>
+                                                <?= $datprd['harga']; ?>
                                             </td>
                                             <td>
                                                 <?= $datprd['berat']; ?>
@@ -88,12 +85,10 @@
                                                 <?= date('d M Y', strtotime($datprd['waktu_input'])); ?>
                                             </td>
                                             <td>
+                                                <?= date('D, m Y', strtotime($datprd['hari'])) . ' - ' . date('H:i', strtotime($datprd['pukul'])); ?>
+                                            </td>
+                                            <td>
                                                 <div class="row justify-content-center">
-                                                    <!-- <div class="col-lg-6">
-                                                        <a href="#edit-data-tanaman" class="badge badge-warning" role="badge" data-id="<?= $datprd['id_product']; ?>" data-nama="<?= $datprd['nama_produk']; ?>" data-satuan="<?= $datprd['satuan']; ?>" data-harbe="<?= $datprd['harga_beli'] ?>" data-harser="<?= $datprd['harga_user']; ?>" data-berat="<?= $datprd['berat']; ?>" data-gambar="<?= $datprd['gambar']; ?>" data-ket="<?= $datprd['keterangan']; ?>" data-toggle="modal">
-                                                            <i class="fa fa-edit"></i>Edit
-                                                        </a>
-                                                    </div> -->
                                                     <div class="col-xxl-6 mr-2">
                                                         <a href="#pesan<?= $datprd['id_product'] ?>" class="badge badge-info" data-toggle="modal">
                                                             <i class="fa fa-edit"></i>Pesan
@@ -152,12 +147,8 @@
                                         <input type="text" class="form-control" name="satuan" id="satuan">
                                     </div>
                                     <div class="form-group">
-                                        <label for="Warna" class="">Harga Beli</label>
-                                        <input type="text" class="form-control" name="harga_beli" id="harga_beli">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="Harga" class="">Harga User</label>
-                                        <input type="text" class="form-control" name="harga_user" id="harga_user">
+                                        <label for="Harga" class="">Harga</label>
+                                        <input type="text" class="form-control" name="harga" id="harga">
                                     </div>
                                     <div class="form-group">
                                         <label for="Berat" class="">Berat</label>
@@ -184,7 +175,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="username" class="">Username</label>
-                                        <input type="text" class="form-control" name="username" id="username">
+                                        <input type="text" class="form-control" name="username" id="username" value="<?= $user['username']; ?>">
                                     </div>
                                     <div class="form-group">
                                         <label for="Lokasi" class="">Lokasi</label>
@@ -200,6 +191,16 @@
                                             <select class="form-control" name="id_category" id="id_category">
                                                 <?php foreach ($category as $data) : ?>
                                                     <option value="<?= $data['id_category']; ?>"><?= $data['nama_category']; ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="form-group">
+                                            <label for="Jadwal">Jadwal</label>
+                                            <select class="form-control" name="id_jadwal" id="id_jadwal">
+                                                <?php foreach ($jadwals as $idata) : ?>
+                                                    <option value="<?= $idata['id']; ?>"><?= date('D, m Y', strtotime($idata['hari'])) . ' - ' . date('H:i', strtotime($idata['pukul'])); ?></option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </div>
@@ -260,14 +261,9 @@
                                                     <input type="text" class="form-control" name="satuan" id="satuan" value="<?= $datprd['satuan']; ?>" readonly>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="Warna">Harga Beli</label>
+                                                    <label for="Harga">Harga</label>
                                                     <br>
-                                                    <input type="text" class="form-control" name="harga_beli" id="harga_beli" value="<?= $datprd['harga_beli']; ?>" readonly>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="Harga">Harga User</label>
-                                                    <br>
-                                                    <input type="text" class="form-control" name="harga_user" id="harga_user" value="<?= $datprd['harga_user']; ?>">
+                                                    <input type="text" class="form-control" name="harga" id="harga" value="<?= $datprd['harga']; ?>">
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Berat">Berat</label>
@@ -320,6 +316,14 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
+                                                    <div class="form-group">
+                                                        <label for="Jadwal">Jadwal</label>
+                                                        <br>
+                                                        <input type="hidden" class="form-control" name="id_jadwal" id="id_jadwal" value="<?= $datprd['id_jadwal'] ?>">
+                                                        <input type="text" class="form-control" name="" id="" value="<?= date('D, m Y', strtotime($idata['hari'])) . ' - ' . date('H:i', strtotime($idata['pukul'])); ?>" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
                                                     <label for="Tanggal">Tanggal</label>
                                                     <br>
                                                     <input type="date" class="form-control" name="waktu_input" id="waktu_input" value="<?= date('Y-m-d', strtotime($datprd['waktu_input'])); ?>" readonly>
@@ -365,10 +369,10 @@
                                         <div class="col-md-6">
                                             <li class="list-group-item">Nama &nbsp;:&nbsp;<?= $datprd['nama_produk']; ?></li>
                                             <li class="list-group-item">Satuan &nbsp;:&nbsp;<?= $datprd['satuan']; ?></li>
-                                            <li class="list-group-item">Harga Beli &nbsp;:&nbsp;<?= $datprd['harga_beli']; ?></li>
-                                            <li class="list-group-item">Harga User &nbsp;:&nbsp;<?= $datprd['harga_user']; ?></li>
+                                            <li class="list-group-item">Harga &nbsp;:&nbsp;<?= $datprd['harga']; ?></li>
                                             <li class="list-group-item">Berat &nbsp;:&nbsp;<?= $datprd['berat']; ?></li>
                                             <li class="list-group-item">Stok &nbsp;:&nbsp;<?= $datprd['stok']; ?></li>
+                                            <li class="list-group-item">Jadwal &nbsp;:&nbsp;<?= date('D, m Y', strtotime($datprd['hari'])) . ' - ' . date('H:i', strtotime($datprd['pukul']));; ?></li>
                                         </div>
                                         <div class="col-md-6">
                                             <li class="list-group-item">Gambar

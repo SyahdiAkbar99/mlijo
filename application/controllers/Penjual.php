@@ -18,9 +18,9 @@ class Penjual extends CI_Controller
     {
         $data['title'] = 'Dashboard Penjual';
         $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
-        $data['countUser'] = $this->dam->count_user();
-        $data['transaksi1'] = $this->dam->getOrderMonthly();
-        $data['transaksi2'] = $this->dam->getOrderFinish();
+        $data['saldo'] = $this->dam->saldo_user($data['user']['id_user']);
+        $data['transaksi1'] = $this->dsm->getOrderMonthly($data['user']['id_user']);
+        $data['transaksi2'] = $this->dsm->getOrderFinish($data['user']['id_user']);
         $data['ongkir1'] = $this->dam->getOrderOngkir();
 
         $this->load->view('templates/penjual/header', $data);
@@ -37,7 +37,7 @@ class Penjual extends CI_Controller
         $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
 
         //tampilkan data Produk sesuai user
-        $data['riwayat_trans'] = $this->dam->riwayat_transaksi();
+        $data['riwayat_trans'] = $this->dsm->riwayat_transaksi($data['user']['id_user']);
         $data['code'] = $this->Kode();
 
         $this->form_validation->set_rules('status', 'Status', 'required|trim', [
@@ -76,7 +76,7 @@ class Penjual extends CI_Controller
         $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
 
         //tampilkan data Produk sesuai user
-        $data['riwayat_trans'] = $this->dam->riwayat_transaksi();
+        $data['riwayat_trans'] = $this->dsm->riwayat_transaksi($data['user']['id_user']);
 
         $data['code'] = $this->Kode();
 
@@ -143,10 +143,7 @@ class Penjual extends CI_Controller
         $this->form_validation->set_rules('satuan', 'Satuan', 'required|trim', [
             'required' => '%s tidak boleh kosong !'
         ]);
-        $this->form_validation->set_rules('harga_beli', 'Harga Beli', 'required|trim', [
-            'required' => '%s tidak boleh kosong !'
-        ]);
-        $this->form_validation->set_rules('harga_user', 'Harga User', 'required|trim', [
+        $this->form_validation->set_rules('harga', 'Harga', 'required|trim', [
             'required' => '%s tidak boleh kosong !'
         ]);
         $this->form_validation->set_rules('berat', 'Berat', 'required|trim', [
@@ -168,9 +165,10 @@ class Penjual extends CI_Controller
         if ($this->form_validation->run() == false) {
             $data['title'] = 'Data Produk';
             $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
-            $data['data_product'] = $this->dsm->product();
+            $data['data_product'] = $this->dsm->product($data['user']['id_user']);
             $data['shipping'] = $this->dam->shipping();
             $data['category'] = $this->dam->category();
+            $data['jadwals'] = $this->dam->jadwals();
             $data['code'] = $this->Kode();
 
             $this->load->view('templates/penjual/header', $data);
@@ -195,8 +193,7 @@ class Penjual extends CI_Controller
                     $data = [
                         'nama_produk' => $this->input->post('nama_produk'),
                         'satuan' => $this->input->post('satuan'),
-                        'harga_beli' => $this->input->post('harga_beli'),
-                        'harga_user' => $this->input->post('harga_user'),
+                        'harga' => $this->input->post('harga'),
                         'berat' => $this->input->post('berat'),
                         'stok' => $this->input->post('stok'),
                         'gambar' => $this->upload->data('file_name'),
@@ -206,6 +203,7 @@ class Penjual extends CI_Controller
                         'waktu_input' => $this->input->post('waktu_input'),
                         'id_ongkir' => $this->input->post('id_ongkir'),
                         'id_category' => $this->input->post('id_category'),
+                        'id_jadwal' => $this->input->post('id_jadwal'),
                         'id_user' => $this->session->userdata('id_user'),
                     ];
                     $this->dsm->insert_product($data);
@@ -233,7 +231,6 @@ class Penjual extends CI_Controller
             $data = [
                 'nama_produk' => $this->input->post('nama_produk'),
                 'satuan' => $this->input->post('satuan'),
-                'harga_beli' => $this->input->post('harga_beli'),
                 'harga_user' => $this->input->post('harga_user'),
                 'berat' => $this->input->post('berat'),
                 'gambar' => $this->upload->data('file_name'),
@@ -241,6 +238,7 @@ class Penjual extends CI_Controller
                 'username' => $this->input->post('username'),
                 'id_ongkir' => $this->input->post('id_ongkir'),
                 'id_category' => $this->input->post('id_category'),
+                'id_jadwal' => $this->input->post('id_jadwal'),
                 'id_user' => $this->session->userdata('id_user'),
 
                 'waktu_input' => $this->input->post('waktu_input'),
@@ -270,10 +268,7 @@ class Penjual extends CI_Controller
         $this->form_validation->set_rules('satuan', 'Satuan', 'required|trim', [
             'required' => '%s tidak boleh kosong !'
         ]);
-        $this->form_validation->set_rules('harga_beli', 'Harga Beli', 'required|trim', [
-            'required' => '%s tidak boleh kosong !'
-        ]);
-        $this->form_validation->set_rules('harga_user', 'Harga User', 'required|trim', [
+        $this->form_validation->set_rules('harga', 'Harga', 'required|trim', [
             'required' => '%s tidak boleh kosong !'
         ]);
         $this->form_validation->set_rules('berat', 'Berat', 'required|trim', [
@@ -329,8 +324,7 @@ class Penjual extends CI_Controller
                     $data = [
                         'nama_produk' => $this->input->post('nama_produk'),
                         'satuan' => $this->input->post('satuan'),
-                        'harga_beli' => $this->input->post('harga_beli'),
-                        'harga_user' => $this->input->post('harga_user'),
+                        'harga' => $this->input->post('harga'),
                         'berat' => $this->input->post('berat'),
                         'stok' => $this->input->post('stok'),
                         'gambar' => $this->upload->data('file_name'),
@@ -339,6 +333,7 @@ class Penjual extends CI_Controller
                         'waktu_input' => $this->input->post('waktu_input'),
                         'id_ongkir' => $this->input->post('id_ongkir'),
                         'id_category' => $this->input->post('id_category'),
+                        'id_jadwal' => $this->input->post('id_jadwal'),
                         'id_user' => $this->session->userdata('id_user'),
                     ];
                     $this->db->where('id_product', $id);
@@ -381,14 +376,14 @@ class Penjual extends CI_Controller
             $data = [
                 'nama_produk' => $this->input->post('nama_produk'),
                 'satuan' => $this->input->post('satuan'),
-                'harga_beli' => $this->input->post('harga_beli'),
-                'harga_user' => $this->input->post('harga_user'),
+                'harga' => $this->input->post('harga'),
                 'berat' => $this->input->post('berat'),
                 'stok' => $this->input->post('stok'),
                 'keterangan' => $this->input->post('keterangan'),
                 'username' => $this->input->post('username'),
                 'id_ongkir' => $this->input->post('id_ongkir'),
                 'id_category' => $this->input->post('id_category'),
+                'id_jadwal' => $this->input->post('id_jadwal'),
                 'id_user' => $this->session->userdata('id_user'),
 
                 'waktu_input' => $this->input->post('waktu_input'),
@@ -455,7 +450,7 @@ class Penjual extends CI_Controller
         if ($this->form_validation->run() == false) {
             $data['title'] = 'Barang Keluar';
             $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
-            $data['barkel'] = $this->dsm->barang_keluar();
+            $data['barkel'] = $this->dsm->barang_keluar($data['user']['id_user']);
 
             $this->load->view('templates/penjual/header', $data);
             $this->load->view('templates/penjual/sidebar', $data);

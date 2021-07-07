@@ -5,7 +5,8 @@ class DashAdmin_model extends CI_Model
     //Data User
     public function getAllUser()
     {
-        $query = "SELECT * FROM user ORDER BY user.id_user ASC";
+        $query = "SELECT user.*,
+                    (SELECT SUM(orders.harga) FROM orders WHERE user.id_user = orders.id_penjual) as pendp FROM user";
         return $this->db->query($query)->result_array();
     }
     public function statusUser($where, $data)
@@ -26,6 +27,19 @@ class DashAdmin_model extends CI_Model
             user.id_akses != 1
               HAVING COUNT(user.id_akses)
               ORDER BY user.date_created ASC";
+
+        $countUser = $this->db->query($query)->result_array();
+
+        return $countUser;
+    }
+    public function saldo_user($id)
+    {
+        $query = "SELECT SUM(orders.harga) AS saldo, waktu_input, orders.satuan
+        FROM orders
+          WHERE
+            orders.id_penjual = $id
+              HAVING COUNT(orders.harga)
+              ORDER BY orders.waktu_input ASC";
 
         $countUser = $this->db->query($query)->result_array();
 
@@ -64,6 +78,16 @@ class DashAdmin_model extends CI_Model
         $this->db->update('user', $data);
     }
 
+    //Data Tanaman
+    public function product()
+    {
+        $query = "SELECT * FROM product
+                    JOIN ongkir ON product.id_ongkir = ongkir.id_ongkir
+                    JOIN category ON product.id_category = category.id_category
+                    JOIN jadwal ON product.id_jadwal = jadwal.id";
+        return $this->db->query($query)->result_array();
+    }
+
 
 
     //Data Riwayat Penjualan
@@ -72,7 +96,9 @@ class DashAdmin_model extends CI_Model
         $query = "SELECT * FROM orderdetails
                     JOIN orders ON orderdetails.id_order = orders.id_order
                     JOIN category ON orders.id_category = category.id_category
-                    JOIN ongkir ON orders.id_ongkir = ongkir.id_ongkir";
+                    JOIN ongkir ON orders.id_ongkir = ongkir.id_ongkir
+                    JOIN jadwal ON orders.id_jadwal = jadwal.id
+                    GROUP BY orders.kode_transaksi";
         return $this->db->query($query)->result_array();
     }
 
@@ -80,6 +106,13 @@ class DashAdmin_model extends CI_Model
     public function shipping()
     {
         $query = "SELECT * FROM ongkir ORDER BY ongkir.id_ongkir DESC";
+        return $this->db->query($query)->result_array();
+    }
+
+    //Data jadwal
+    public function jadwals()
+    {
+        $query = "SELECT * FROM jadwal ORDER BY jadwal.id DESC";
         return $this->db->query($query)->result_array();
     }
 
@@ -110,7 +143,7 @@ class DashAdmin_model extends CI_Model
     {
         $query = "SELECT COUNT(orders.kode_transaksi) AS sumtran, DATE_FORMAT(orders.waktu_input, '%M %Y') AS bulan
          FROM orders
-            WHERE orders.status = 3
+            WHERE orders.status = 3 
                GROUP BY MONTH(orders.waktu_input)
                HAVING COUNT(orders.kode_transaksi)
                ORDER BY orders.waktu_input ASC";

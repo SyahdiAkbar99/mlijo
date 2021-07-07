@@ -25,6 +25,7 @@
                                         <th>Alamat</th>
                                         <th>Akses</th>
                                         <th>Tanggal Register</th>
+                                        <th>Saldo</th>
                                         <th>Opsi</th>
                                     </tr>
                                 </thead>
@@ -56,6 +57,9 @@
                                                 </td>
                                                 <td>
                                                     <?= date('d M Y', $datusr['date_created']); ?>
+                                                </td>
+                                                <td>
+                                                    <?= 'Rp ' . number_format($datusr['pendp'], 2, ',', '.'); ?>
                                                 </td>
                                                 <td>
                                                     <div class="row justify-content-center">

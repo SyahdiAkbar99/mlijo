@@ -15,7 +15,7 @@
                                 </div>
                             <?php endif; ?>
                             <?= $this->session->flashdata('message') ?>
-                            <table id="data-tanaman" class="table">
+                            <table id="data-ongkir" class="table">
                                 <thead>
                                     <tr>
                                         <th>No</th>

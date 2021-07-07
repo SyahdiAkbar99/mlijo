@@ -43,18 +43,18 @@
                 <div class="card card-stats">
                     <div class="card-header card-header-info card-header-icon">
                         <div class="card-icon">
-                            <i class="material-icons">people</i>
+                            <i class="material-icons">money</i>
                         </div>
-                        <p class="card-category">User</p>
+                        <p class="card-category">Saldo</p>
                         <h3 class="card-title">
-                            <?php foreach ($countUser as $row) : ?>
-                                <?= $row['penjual']; ?>
+                            <?php foreach ($saldo as $row) : ?>
+                                <?= 'Rp ' . number_format($row['saldo'], 2, ',', '.'); ?>
                             <?php endforeach; ?>
                         </h3>
                     </div>
                     <div class="card-footer">
                         <div class="stats">
-                            <i class="material-icons text-success">people</i> User
+                            <i class="material-icons text-success">money</i> User
                         </div>
                     </div>
                 </div>
@@ -66,9 +66,7 @@
                             <i class="material-icons">location_on</i>
                         </div>
                         <p class="card-category">Lokasi</p>
-                        <?php foreach ($ongkir1 as $onr) : ?>
-                            <h3 class="card-title"><?= $onr['sumrim']; ?></h3>
-                        <?php endforeach; ?>
+                        <h3 class="card-title"><?= $user['alamat'] . ' - ' . $user['tempat_lahir']; ?></h3>
                     </div>
                     <div class="card-footer">
                         <div class="stats">

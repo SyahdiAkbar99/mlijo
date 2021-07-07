@@ -204,10 +204,7 @@ class Admin extends CI_Controller
         $this->form_validation->set_rules('satuan', 'Satuan', 'required|trim', [
             'required' => '%s tidak boleh kosong !'
         ]);
-        $this->form_validation->set_rules('harga_beli', 'Harga Beli', 'required|trim', [
-            'required' => '%s tidak boleh kosong !'
-        ]);
-        $this->form_validation->set_rules('harga_user', 'Harga User', 'required|trim', [
+        $this->form_validation->set_rules('harga', 'Harga User', 'required|trim', [
             'required' => '%s tidak boleh kosong !'
         ]);
         $this->form_validation->set_rules('berat', 'Berat', 'required|trim', [
@@ -229,9 +226,10 @@ class Admin extends CI_Controller
         if ($this->form_validation->run() == false) {
             $data['title'] = 'Data Produk';
             $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
-            $data['data_product'] = $this->dsm->product();
+            $data['data_product'] = $this->dam->product();
             $data['shipping'] = $this->dam->shipping();
             $data['category'] = $this->dam->category();
+            $data['jadwals'] = $this->dam->jadwals();
             $data['code'] = $this->Kode();
 
             $this->load->view('templates/admin/header', $data);
@@ -256,8 +254,7 @@ class Admin extends CI_Controller
                     $data = [
                         'nama_produk' => $this->input->post('nama_produk'),
                         'satuan' => $this->input->post('satuan'),
-                        'harga_beli' => $this->input->post('harga_beli'),
-                        'harga_user' => $this->input->post('harga_user'),
+                        'harga' => $this->input->post('harga'),
                         'berat' => $this->input->post('berat'),
                         'stok' => $this->input->post('stok'),
                         'gambar' => $this->upload->data('file_name'),
@@ -267,6 +264,7 @@ class Admin extends CI_Controller
                         'waktu_input' => $this->input->post('waktu_input'),
                         'id_ongkir' => $this->input->post('id_ongkir'),
                         'id_category' => $this->input->post('id_category'),
+                        'id_jadwal' => $this->input->post('id_jadwal'),
                         'id_user' => $this->session->userdata('id_user'),
                     ];
                     $this->dsm->insert_product($data);
@@ -294,14 +292,14 @@ class Admin extends CI_Controller
             $data = [
                 'nama_produk' => $this->input->post('nama_produk'),
                 'satuan' => $this->input->post('satuan'),
-                'harga_beli' => $this->input->post('harga_beli'),
-                'harga_user' => $this->input->post('harga_user'),
+                'harga' => $this->input->post('harga'),
                 'berat' => $this->input->post('berat'),
                 'gambar' => $this->upload->data('file_name'),
                 'keterangan' => $this->input->post('keterangan'),
                 'username' => $this->input->post('username'),
                 'id_ongkir' => $this->input->post('id_ongkir'),
                 'id_category' => $this->input->post('id_category'),
+                'id_jadwal' => $this->input->post('id_jadwal'),
                 'id_user' => $this->session->userdata('id_user'),
 
                 'waktu_input' => $this->input->post('waktu_input'),
@@ -331,10 +329,7 @@ class Admin extends CI_Controller
         $this->form_validation->set_rules('satuan', 'Satuan', 'required|trim', [
             'required' => '%s tidak boleh kosong !'
         ]);
-        $this->form_validation->set_rules('harga_beli', 'Harga Beli', 'required|trim', [
-            'required' => '%s tidak boleh kosong !'
-        ]);
-        $this->form_validation->set_rules('harga_user', 'Harga User', 'required|trim', [
+        $this->form_validation->set_rules('harga', 'Harga User', 'required|trim', [
             'required' => '%s tidak boleh kosong !'
         ]);
         $this->form_validation->set_rules('berat', 'Berat', 'required|trim', [
@@ -390,8 +385,7 @@ class Admin extends CI_Controller
                     $data = [
                         'nama_produk' => $this->input->post('nama_produk'),
                         'satuan' => $this->input->post('satuan'),
-                        'harga_beli' => $this->input->post('harga_beli'),
-                        'harga_user' => $this->input->post('harga_user'),
+                        'harga' => $this->input->post('harga'),
                         'berat' => $this->input->post('berat'),
                         'stok' => $this->input->post('stok'),
                         'gambar' => $this->upload->data('file_name'),
@@ -400,6 +394,7 @@ class Admin extends CI_Controller
                         'waktu_input' => $this->input->post('waktu_input'),
                         'id_ongkir' => $this->input->post('id_ongkir'),
                         'id_category' => $this->input->post('id_category'),
+                        'id_jadwal' => $this->input->post('id_jadwal'),
                         'id_user' => $this->session->userdata('id_user'),
                     ];
                     $this->db->where('id_product', $id);
@@ -442,14 +437,14 @@ class Admin extends CI_Controller
             $data = [
                 'nama_produk' => $this->input->post('nama_produk'),
                 'satuan' => $this->input->post('satuan'),
-                'harga_beli' => $this->input->post('harga_beli'),
-                'harga_user' => $this->input->post('harga_user'),
+                'harga' => $this->input->post('harga'),
                 'berat' => $this->input->post('berat'),
                 'gambar' => $this->upload->data('file_name'),
                 'keterangan' => $this->input->post('keterangan'),
                 'username' => $this->input->post('username'),
                 'id_ongkir' => $this->input->post('id_ongkir'),
                 'id_category' => $this->input->post('id_category'),
+                'id_jadwal' => $this->input->post('id_jadwal'),
                 'id_user' => $this->session->userdata('id_user'),
 
                 'waktu_input' => $this->input->post('waktu_input'),
@@ -751,7 +746,7 @@ class Admin extends CI_Controller
 
     public function add_orders()
     {
-        $this->form_validation->set_rules('harga_user', 'Harga User', 'required|trim', [
+        $this->form_validation->set_rules('harga', 'Harga User', 'required|trim', [
             'required' => '%s tidak boleh kosong !'
         ]);
         $this->form_validation->set_rules('stok', 'Jumlah', 'required|trim', [
@@ -776,8 +771,7 @@ class Admin extends CI_Controller
                 'kode_transaksi' => $this->input->post('kode_transaksi'),
                 'nama_produk' => $this->input->post('nama_produk'),
                 'satuan' => $this->input->post('satuan'),
-                'harga_beli' => $this->input->post('harga_beli'),
-                'harga_user' => $this->input->post('harga_user'),
+                'harga' => $this->input->post('harga'),
                 'berat' => $this->input->post('berat'),
                 'stok' => $this->input->post('stok'),
                 'gambar' => $this->input->post('gambar'),
@@ -788,6 +782,7 @@ class Admin extends CI_Controller
                 'id_category' => $this->input->post('id_category'),
                 'id_pembeli' => $this->session->userdata('id_user'),
                 'id_penjual' => $this->input->post('penjual_id'),
+                'id_jadwal' => $this->input->post('id_jadwal'),
                 'id_product' => $this->input->post('id'),
             ];
             $query = $this->db->insert('orders', $data);
@@ -796,7 +791,7 @@ class Admin extends CI_Controller
                 $data = [
                     'id_order' => $id,
                     'id_product' => $this->input->post('id'),
-                    'harga_pesan' => $this->input->post('harga_user'),
+                    'harga_pesan' => $this->input->post('harga'),
                     'jumlah_pesan' => $this->input->post('stok'),
                     'satuan' => $this->input->post('satuan'),
                 ];
@@ -860,6 +855,138 @@ class Admin extends CI_Controller
         }
     }
 
+
+    //Riwayat Penjualan
+    public function jadwal()
+    {
+
+        $this->form_validation->set_rules('hari', 'Hari', 'required|trim');
+        $this->form_validation->set_rules('pukul', 'Pukul', 'required|trim');
+
+        if ($this->form_validation->run() == false) {
+            $data['title'] = 'Jadwal';
+            $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
+
+            //tampilkan data Produk sesuai user
+            $data['jadwals'] = $this->dam->jadwals();
+            $this->load->view('templates/admin/header', $data);
+            $this->load->view('templates/admin/sidebar', $data);
+            $this->load->view('templates/admin/navbar', $data);
+            $this->load->view('admin/jadwal', $data);
+            $this->load->view('templates/admin/footer', $data);
+        } else {
+            $data = [
+                'hari' => $this->input->post('hari'),
+                'pukul' => $this->input->post('pukul'),
+            ];
+            $query = $this->db->insert('jadwal', $data);
+            if ($query) {
+                $this->session->set_flashdata(
+                    'message',
+                    '<div class="alert alert-success" role="alert">
+                    Jadwal berhasil ditambahkan !
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>'
+                );
+                redirect('Admin/jadwal');
+            } else {
+                $this->session->set_flashdata(
+                    'message',
+                    '<div class="alert alert-danger" role="alert">
+                    Jadwal gagal ditambahkan !
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>'
+                );
+                redirect('Admin/jadwal');
+            }
+        }
+    }
+
+    public function edit_jadwal()
+    {
+
+        $this->form_validation->set_rules('hari', 'Hari', 'required|trim');
+        $this->form_validation->set_rules('pukul', 'Pukul', 'required|trim');
+
+        if ($this->form_validation->run() == false) {
+            $data['title'] = 'Jadwal';
+            $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
+            //tampilkan data Produk sesuai user
+            $data['jadwals'] = $this->dam->jadwals();
+            $this->load->view('templates/admin/header', $data);
+            $this->load->view('templates/admin/sidebar', $data);
+            $this->load->view('templates/admin/navbar', $data);
+            $this->load->view('admin/jadwal', $data);
+            $this->load->view('templates/admin/footer', $data);
+        } else {
+            $id = $this->input->post('id');
+            $data = [
+                'hari' => $this->input->post('hari'),
+                'pukul' => $this->input->post('pukul'),
+            ];
+            $this->db->where('id', $id);
+            $query = $this->db->update('jadwal', $data);
+            if ($query) {
+                $this->session->set_flashdata(
+                    'message',
+                    '<div class="alert alert-success" role="alert">
+                    Jadwal berhasil di-edit !
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>'
+                );
+                redirect('Admin/jadwal');
+            } else {
+                $this->session->set_flashdata(
+                    'message',
+                    '<div class="alert alert-danger" role="alert">
+                    Jadwal gagal di-edit !
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>'
+                );
+                redirect('Admin/jadwal');
+            }
+        }
+    }
+
+    public function delete_jadwal()
+    {
+
+        $id = $this->input->get('id');
+
+        $this->db->where('id', $id);
+        $query = $this->db->delete('jadwal');
+        if ($query) {
+            $this->session->set_flashdata(
+                'message',
+                '<div class="alert alert-success" role="alert">
+                    Jadwal berhasil dihapus !
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>'
+            );
+            redirect('Admin/jadwal');
+        } else {
+            $this->session->set_flashdata(
+                'message',
+                '<div class="alert alert-danger" role="alert">
+                    Jadwal gagal dihapus !
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>'
+            );
+            redirect('Admin/jadwal');
+        }
+    }
 
 
 

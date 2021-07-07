@@ -18,14 +18,13 @@
                                 </div>
                             <?php endif; ?>
                             <?= $this->session->flashdata('message') ?>
-                            <table id="data-tanaman" class="table">
+                            <table id="data-transaksi" class="table">
                                 <thead>
                                     <tr class="">
                                         <th>No</th>
                                         <th>Nama Produk</th>
                                         <th>Satuan</th>
-                                        <th>Harga Beli</th>
-                                        <th>Harga User</th>
+                                        <th>Harga</th>
                                         <th>Berat</th>
                                         <th>Stok</th>
                                         <th class="text-center">Gambar</th>
@@ -34,6 +33,7 @@
                                         <th>Lokasi</th>
                                         <th>Tarif</th>
                                         <th>Kategori</th>
+                                        <th>Jadwal</th>
                                         <th>Status</th>
                                         <th>Tanggal</th>
                                         <th class="text-center">Opsi</th>
@@ -53,10 +53,7 @@
                                                     <?= $rwt['satuan']; ?>
                                                 </td>
                                                 <td>
-                                                    <?= $rwt['harga_beli']; ?>
-                                                </td>
-                                                <td>
-                                                    <?= $rwt['harga_user']; ?>
+                                                    <?= $rwt['harga']; ?>
                                                 </td>
                                                 <td>
                                                     <?= $rwt['berat']; ?>
@@ -102,11 +99,6 @@
                                                 </td>
                                                 <td>
                                                     <div class="row justify-content-center">
-                                                        <!-- <div class="col-lg-6">
-                                                        <a href="#edit-data-tanaman" class="badge badge-warning" role="badge" data-id="<?= $rwt['id_product']; ?>" data-nama="<?= $rwt['nama_produk']; ?>" data-satuan="<?= $rwt['satuan']; ?>" data-harbe="<?= $rwt['harga_beli'] ?>" data-harser="<?= $rwt['harga_user']; ?>" data-berat="<?= $rwt['berat']; ?>" data-gambar="<?= $rwt['gambar']; ?>" data-ket="<?= $rwt['keterangan']; ?>" data-toggle="modal">
-                                                            <i class="fa fa-edit"></i>Edit
-                                                        </a>
-                                                    </div> -->
                                                         <div class="col-xxl-6 mr-2">
                                                             <a href="#lihat<?= $rwt['id_product'] ?>" class="badge badge-info" data-toggle="modal">
                                                                 <i class="fa fa-info-circle"></i> Lihat
@@ -156,12 +148,8 @@
                                         <input type="text" class="form-control" name="satuan" id="satuan">
                                     </div>
                                     <div class="form-group">
-                                        <label for="Warna" class="">Harga Beli</label>
-                                        <input type="text" class="form-control" name="harga_beli" id="harga_beli">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="Harga" class="">Harga User</label>
-                                        <input type="text" class="form-control" name="harga_user" id="harga_user">
+                                        <label for="Harga" class="">Harga</label>
+                                        <input type="text" class="form-control" name="harga" id="harga">
                                     </div>
                                     <div class="form-group">
                                         <label for="Berat" class="">Berat</label>
@@ -264,14 +252,9 @@
                                                     <input type="text" class="form-control" name="satuan" id="satuan" value="<?= $rwt['satuan']; ?>" readonly>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="Warna">Harga Beli</label>
+                                                    <label for="Harga">Harga</label>
                                                     <br>
-                                                    <input type="text" class="form-control" name="harga_beli" id="harga_beli" value="<?= $rwt['harga_beli']; ?>" readonly>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="Harga">Harga User</label>
-                                                    <br>
-                                                    <input type="text" class="form-control" name="harga_user" id="harga_user" value="<?= $rwt['harga_user']; ?>">
+                                                    <input type="text" class="form-control" name="harga" id="harga" value="<?= $rwt['harga']; ?>">
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Berat">Berat</label>
@@ -375,8 +358,7 @@
                                         <div class="col-md-6">
                                             <li class="list-group-item">Nama &nbsp;:&nbsp;<?= $rwt['nama_produk']; ?></li>
                                             <li class="list-group-item">Satuan &nbsp;:&nbsp;<?= $rwt['satuan']; ?></li>
-                                            <li class="list-group-item">Harga Beli &nbsp;:&nbsp;<?= $rwt['harga_beli']; ?></li>
-                                            <li class="list-group-item">Harga User &nbsp;:&nbsp;<?= $rwt['harga_user']; ?></li>
+                                            <li class="list-group-item">Harga &nbsp;:&nbsp;<?= $rwt['harga']; ?></li>
                                             <li class="list-group-item">Berat &nbsp;:&nbsp;<?= $rwt['berat']; ?></li>
                                             <li class="list-group-item">Stok &nbsp;:&nbsp;<?= $rwt['stok']; ?></li>
                                         </div>
