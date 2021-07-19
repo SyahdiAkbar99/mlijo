@@ -32,8 +32,6 @@
                                         <th>Username</th>
                                         <th>Lokasi</th>
                                         <th>Tarif</th>
-                                        <th>Kategori</th>
-                                        <th>Jadwal</th>
                                         <th>Status</th>
                                         <th>Tanggal</th>
                                         <th class="text-center">Opsi</th>
@@ -43,7 +41,7 @@
                                     <?php
                                     $no = 1;
                                     foreach ($riwayat_trans as $rwt) : ?>
-                                        <?php if ($rwt['status'] > 0) : ?>
+                                        <?php if ($rwt['proses'] >= 0) : ?>
                                             <tr>
                                                 <td><?= $no ?></td>
                                                 <td>
@@ -81,31 +79,52 @@
                                                     <?= $rwt['tarif']; ?>
                                                 </td>
                                                 <td>
-                                                    <?= $rwt['nama_category']; ?>
-                                                </td>
-                                                <td>
-                                                    <?= date('D, m Y', strtotime($rwt['hari'])) . ' - ' . date('H:i', strtotime($rwt['pukul'])); ?>
-                                                </td>
-                                                <td>
-                                                    <?php if ($rwt['status'] == 0) : ?>
-                                                        Proses
-                                                    <?php elseif ($rwt['status'] == 1) : ?>
-                                                        Dikirim
-                                                    <?php elseif ($rwt['status'] == 2) : ?>
-                                                        Dijalan
+                                                    <?php if ($rwt['proses'] == 0) : ?>
+                                                        <div class="btn btn-info">
+                                                            <i class="fa fa-info-circle"></i> Diproses
+                                                        </div>
+                                                    <?php elseif ($rwt['proses'] == 1) : ?>
+                                                        <div class="btn btn-primary">
+                                                            <i class="fa fa-info-circle"></i> Dikirim
+                                                        </div>
+                                                    <?php elseif ($rwt['proses'] == 2) : ?>
+                                                        <div class="btn btn-warning">
+                                                            <i class="fa fa-info-circle"></i> Dijalan
+                                                        </div>
                                                     <?php else : ?>
-                                                        Selesai
+                                                        <div class="btn btn-light">
+                                                            <i class="fa fa-info-circle"></i> Selesai
+                                                        </div>
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
-                                                    <?= date('d M Y', strtotime($rwt['waktu_input'])); ?>
+                                                    <?= date('d M Y', strtotime($rwt['waktu_transaksi'])); ?>
                                                 </td>
                                                 <td>
                                                     <div class="row justify-content-center">
                                                         <div class="col-xxl-6 mr-2">
-                                                            <a href="#lihat<?= $rwt['id_product'] ?>" class="badge badge-info" data-toggle="modal">
+                                                            <a href="#lihat<?= $rwt['id_order'] ?>" class="badge badge-info" data-toggle="modal">
                                                                 <i class="fa fa-info-circle"></i> Lihat
                                                             </a>
+                                                        </div>
+                                                        <div class="col-xxl-6 mr-2">
+                                                            <?php if ($rwt['proses'] == 0) : ?>
+                                                                <a href="#kirim<?= $rwt['id_order'] ?>" class="badge badge-primary" data-toggle="modal">
+                                                                    <i class="fa fa-info-circle"></i> Konfirmasi Kirim
+                                                                </a>
+                                                            <?php elseif ($rwt['proses'] == 1) : ?>
+                                                                <a href="#jalan<?= $rwt['id_order'] ?>" class="badge badge-warning" data-toggle="modal">
+                                                                    <i class="fa fa-info-circle"></i> Konfirmasi Dijalan
+                                                                </a>
+                                                            <?php elseif ($rwt['proses'] == 2) : ?>
+                                                                <a href="#selesai<?= $rwt['id_order'] ?>" class="badge badge-info" data-toggle="modal">
+                                                                    <i class="fa fa-info-circle"></i> Konfirmasi Selesai
+                                                                </a>
+                                                            <?php else : ?>
+                                                                <a href="#" class="badge badge-light" data-toggle="modal">
+                                                                    <i class="fa fa-info-circle"></i> Selesai
+                                                                </a>
+                                                            <?php endif; ?>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -201,7 +220,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="Tanggal" class="">Tanggal</label>
-                                        <input type="date" class="form-control" name="waktu_input" id="waktu_input">
+                                        <input type="date" class="form-control" name="waktu_transaksiwaktu_input" id="waktu_input">
                                     </div>
                                 </div>
                             </div>
@@ -237,7 +256,7 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <input type="hidden" name="id" id="id" value="<?= $rwt['id_product']; ?>">
+                                                <input type="hidden" name="id" id="id" value="<?= $rwt['id_order']; ?>">
                                                 <input type="hidden" name="penjual_id" id="penjual_id" value="<?= $rwt['id_user']; ?>">
                                                 <div class="form-group">
                                                     <label for="Kode">Kode Transaksi</label>
@@ -347,7 +366,7 @@
 
         <!-- Modal Lihat -->
         <?php foreach ($riwayat_trans as $rwt) : ?>
-            <div class="modal fade" id="lihat<?= $rwt['id_product']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div class="modal fade" id="lihat<?= $rwt['id_order']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header bg-success">
@@ -362,28 +381,16 @@
                                     <?= $rwt['nama_produk']; ?>
                                 </div>
                                 <ul class="list-group list-group-flush">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <li class="list-group-item">Nama &nbsp;:&nbsp;<?= $rwt['nama_produk']; ?></li>
-                                            <li class="list-group-item">Satuan &nbsp;:&nbsp;<?= $rwt['satuan']; ?></li>
-                                            <li class="list-group-item">Harga Beli &nbsp;:&nbsp;<?= $rwt['harga_beli']; ?></li>
-                                            <li class="list-group-item">Harga User &nbsp;:&nbsp;<?= $rwt['harga_user']; ?></li>
-                                            <li class="list-group-item">Berat &nbsp;:&nbsp;<?= $rwt['berat']; ?></li>
-                                            <li class="list-group-item">Stok &nbsp;:&nbsp;<?= $rwt['stok']; ?></li>
-                                            <li class="list-group-item">Stok &nbsp;:&nbsp; <?= date('D, m Y', strtotime($rwt['hari'])) . ' - ' . date('H:i', strtotime($rwt['pukul'])); ?></li>
+                                    <li class="list-group-item">Nama &nbsp;:&nbsp;<?= $rwt['nama_produk']; ?></li>
+                                    <li class="list-group-item">Satuan &nbsp;:&nbsp;<?= $rwt['satuan']; ?></li>
+                                    <li class="list-group-item">Stok &nbsp;:&nbsp;<?= $rwt['stok']; ?></li>
+                                    <li class="list-group-item">Gambar
+                                        <div class="card" style="width: 10rem;">
+                                            <img src="<?= base_url('assets/img/produk/') . $rwt['gambar']; ?>" class="img-thumbnail" alt="plant-pict">
                                         </div>
-                                        <div class="col-md-6">
-                                            <li class="list-group-item">Gambar
-                                                <div class="card" style="width: 10rem;">
-                                                    <img src="<?= base_url('assets/img/produk/') . $rwt['gambar']; ?>" class="img-thumbnail" alt="plant-pict">
-                                                </div>
-                                            </li>
-                                            <li class="list-group-item">Keterangan &nbsp;:&nbsp;<?= $rwt['keterangan']; ?></li>
-                                            <li class="list-group-item">Username &nbsp;:&nbsp;<?= $rwt['username']; ?></li>
-                                            <li class="list-group-item">Lokasi &nbsp;:&nbsp;<?= $rwt['tempat_kirim']; ?></li>
-                                            <li class="list-group-item">Tanggal &nbsp;:&nbsp;<?= date('D, m Y', strtotime($rwt['waktu_input'])); ?></li>
-                                        </div>
-                                    </div>
+                                    </li>
+                                    <li class="list-group-item">Keterangan &nbsp;:&nbsp;<?= $rwt['keterangan']; ?></li>
+                                    <li class="list-group-item">Tanggal &nbsp;:&nbsp;<?= date('D, m Y', strtotime($rwt['waktu_transaksi'])); ?></li>
                                 </ul>
                             </div>
                         </div>
@@ -399,25 +406,25 @@
         <!-- /.modal -->
 
 
-        <!-- Modal Delete -->
+        <!-- Modal Konfirmasi Kirim -->
         <?php foreach ($riwayat_trans as $rwt) : ?>
-            <div class="modal fade" id="delete<?= $rwt['id_product']; ?>">
+            <div class="modal fade" id="kirim<?= $rwt['id_order']; ?>">
                 <div class=" modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header bg-success">
-                            <h4 class="modal-title">Delete <?= $title ?></h4>
+                            <h4 class="modal-title">Konfirmasi Kirim</h4>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form action="<?= base_url('Admin/delete_produk'); ?>" method="get">
+                        <form action="<?= base_url('Admin/sended_confirm'); ?>" method="get">
                             <div class="modal-body">
-                                <input type="hidden" name="id" id="id" value="<?= $rwt['id_product']; ?>">
-                                <p class="text-center">Apakah anda yakin data ini dihapus?</p>
+                                <input type="text" name="id" id="id" value="<?= $rwt['id_order']; ?>">
+                                <p class="text-center">Apakah anda ingin "Konfirmasi Kirim" data ini ?</p>
                             </div>
                             <div class="modal-footer justify-content-end">
-                                <button type="submit" class="btn btn-danger btn-outline-light">Ya</button>
-                                <button type="button" class="btn btn-secondary btn-outline-light" data-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-info btn-outline-light">Ya</button>
+                                <button type="button" class="btn btn-danger btn-outline-light" data-dismiss="modal">Cancel</button>
                             </div>
                         </form>
                     </div>
@@ -427,5 +434,64 @@
             </div>
         <?php endforeach; ?>
         <!-- /.modal -->
+
+        <!-- Modal Konfirmasi Dijalan -->
+        <?php foreach ($riwayat_trans as $rwt) : ?>
+            <div class="modal fade" id="jalan<?= $rwt['id_order']; ?>">
+                <div class=" modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-success">
+                            <h4 class="modal-title">Konfirmasi Dijalan</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="<?= base_url('Admin/otw_confirm'); ?>" method="get">
+                            <div class="modal-body">
+                                <input type="text" name="id" id="id" value="<?= $rwt['id_order']; ?>">
+                                <p class="text-center">Apakah anda ingin "Konfirmasi Dijalan" data ini ?</p>
+                            </div>
+                            <div class="modal-footer justify-content-end">
+                                <button type="submit" class="btn btn-info btn-outline-light">Ya</button>
+                                <button type="button" class="btn btn-danger btn-outline-light" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+        <?php endforeach; ?>
+        <!-- /.modal -->
+
+        <!-- Modal Konfirmasi Dijalan -->
+        <?php foreach ($riwayat_trans as $rwt) : ?>
+            <div class="modal fade" id="selesai<?= $rwt['id_order']; ?>">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-success">
+                            <h4 class="modal-title">Konfirmasi Selesai</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="<?= base_url('Admin/done_confirm'); ?>" method="get">
+                            <div class="modal-body">
+                                <input type="text" name="id" id="id" value="<?= $rwt['id_order']; ?>">
+                                <p class="text-center">Apakah anda ingin "Konfirmasi Selesai" data ini ?</p>
+                            </div>
+                            <div class="modal-footer justify-content-end">
+                                <button type="submit" class="btn btn-info btn-outline-light">Ya</button>
+                                <button type="button" class="btn btn-danger btn-outline-light" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+        <?php endforeach; ?>
+        <!-- /.modal -->
+
     </div>
 </div>

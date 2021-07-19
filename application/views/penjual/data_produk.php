@@ -23,7 +23,7 @@
                                     <tr class="">
                                         <th>No</th>
                                         <th>Nama Produk</th>
-                                        <th>Satuan</th>
+                                        <th>Type</th>
                                         <th>Harga</th>
                                         <th>Berat</th>
                                         <th>Stok</th>
@@ -33,8 +33,6 @@
                                         <th>Lokasi</th>
                                         <th>Tarif</th>
                                         <th>Kategori</th>
-                                        <th>Tanggal</th>
-                                        <th>Jadwal</th>
                                         <th class="text-center">Opsi</th>
                                     </tr>
                                 </thead>
@@ -48,7 +46,7 @@
                                                 <?= $datprd['nama_produk']; ?>
                                             </td>
                                             <td>
-                                                <?= $datprd['satuan']; ?>
+                                                <?= $datprd['type']; ?>
                                             </td>
                                             <td>
                                                 <?= $datprd['harga']; ?>
@@ -60,7 +58,7 @@
                                                 <?= $datprd['stok']; ?>
                                             </td>
                                             <td>
-                                                <div class="row justify-content-center">
+                                                <div class="row justify-content-center m-2">
                                                     <div class="card" style="width: 10rem;">
                                                         <img src="<?= base_url('assets/img/produk/') . $datprd['gambar']; ?>" class="img-thumbnail" alt="plant-pict">
                                                     </div>
@@ -70,7 +68,7 @@
                                                 <?= $datprd['keterangan']; ?>
                                             </td>
                                             <td>
-                                                <?= $datprd['username']; ?>
+                                                <?= $user['username']; ?>
                                             </td>
                                             <td>
                                                 <?= $datprd['tempat_kirim']; ?>
@@ -80,12 +78,6 @@
                                             </td>
                                             <td>
                                                 <?= $datprd['nama_category']; ?>
-                                            </td>
-                                            <td>
-                                                <?= date('d M Y', strtotime($datprd['waktu_input'])); ?>
-                                            </td>
-                                            <td>
-                                                <?= date('D, m Y', strtotime($datprd['hari'])) . ' - ' . date('H:i', strtotime($datprd['pukul'])); ?>
                                             </td>
                                             <td>
                                                 <div class="row justify-content-center">
@@ -140,22 +132,27 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="Nama" class="">Nama Produk</label>
+                                        <br>
                                         <input type="text" class="form-control" name="nama_produk" id="nama_produk">
                                     </div>
                                     <div class="form-group">
-                                        <label for="Jenis" class="">Satuan</label>
-                                        <input type="text" class="form-control" name="satuan" id="satuan">
+                                        <label for="Type" class="">Type</label>
+                                        <br>
+                                        <input type="text" class="form-control" name="type" id="type">
                                     </div>
                                     <div class="form-group">
                                         <label for="Harga" class="">Harga</label>
+                                        <br>
                                         <input type="text" class="form-control" name="harga" id="harga">
                                     </div>
                                     <div class="form-group">
                                         <label for="Berat" class="">Berat</label>
+                                        <br>
                                         <input type="number" class="form-control" name="berat" id="berat">
                                     </div>
                                     <div class="form-group">
                                         <label for="Berat" class="">Stok</label>
+                                        <br>
                                         <input type="number" class="form-control" name="stok" id="stok">
                                     </div>
                                 </div>
@@ -164,21 +161,19 @@
                                         <label for="Gambar" class="">Gambar</label>
                                         <div class="input-group">
                                             <div class="custom-file">
-                                                <input type="file" name="gambar" class="custom-file-input" id="gambar">
+                                                <input type="file" name="gambar" class="custom-file-input" id="gambar" required>
                                                 <label class="custom-file-label" for="gambar">Pilih Gambar</label>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="keterangan" class="">Keterangan</label>
+                                        <br>
                                         <input type="text" class="form-control" name="keterangan" id="keterangan">
                                     </div>
                                     <div class="form-group">
-                                        <label for="username" class="">Username</label>
-                                        <input type="text" class="form-control" name="username" id="username" value="<?= $user['username']; ?>">
-                                    </div>
-                                    <div class="form-group">
                                         <label for="Lokasi" class="">Lokasi</label>
+                                        <br>
                                         <select class="form-control" name="id_ongkir" id="id_ongkir">
                                             <?php foreach ($shipping as $rows) : ?>
                                                 <option value="<?= $rows['id_ongkir']; ?>"><?= $rows['tempat_kirim']; ?></option>
@@ -188,26 +183,13 @@
                                     <div class="form-group">
                                         <div class="form-group">
                                             <label for="Kategori">Kategori</label>
+                                            <br>
                                             <select class="form-control" name="id_category" id="id_category">
                                                 <?php foreach ($category as $data) : ?>
                                                     <option value="<?= $data['id_category']; ?>"><?= $data['nama_category']; ?></option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="form-group">
-                                            <label for="Jadwal">Jadwal</label>
-                                            <select class="form-control" name="id_jadwal" id="id_jadwal">
-                                                <?php foreach ($jadwals as $idata) : ?>
-                                                    <option value="<?= $idata['id']; ?>"><?= date('D, m Y', strtotime($idata['hari'])) . ' - ' . date('H:i', strtotime($idata['pukul'])); ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="Tanggal" class="">Tanggal</label>
-                                        <input type="date" class="form-control" name="waktu_input" id="waktu_input">
                                     </div>
                                 </div>
                             </div>
@@ -256,9 +238,9 @@
                                                     <input type="text" class="form-control" name="nama_produk" id="nama_produk" value="<?= $datprd['nama_produk']; ?>">
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="Jenis">Satuan</label>
+                                                    <label for="Type">Type</label>
                                                     <br>
-                                                    <input type="text" class="form-control" name="satuan" id="satuan" value="<?= $datprd['satuan']; ?>">
+                                                    <input type="text" class="form-control" name="type" id="type" value="<?= $datprd['type']; ?>">
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Harga">Harga</label>
@@ -292,11 +274,6 @@
                                                     <input type="text" class="form-control" name="keterangan" id="keterangan" value="<?= $datprd['keterangan']; ?>">
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="Username">Username</label>
-                                                    <br>
-                                                    <input type="text" class="form-control" name="username" id="username" value="<?= $datprd['username']; ?>">
-                                                </div>
-                                                <div class="form-group">
                                                     <div class="form-group">
                                                         <label for="Lokasi">Lokasi</label>
                                                         <select class="form-control" data-style="btn btn-link" name="id_ongkir" id="id_ongkir">
@@ -318,23 +295,7 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="form-group">
-                                                    <div class="form-group">
-                                                        <label for="Jadwal">Jadwal</label>
-                                                        <select class="form-control" data-style="btn btn-link" name="id_jadwal" id="id_jadwal">
-                                                            <option value="<?= $datprd['id_jadwal'] ?>"><?= date('D, m Y', strtotime($datprd['hari'])) . ' - ' . date('H:i', strtotime($datprd['pukul'])); ?></option>
-                                                            <?php foreach ($jadwals as $idata) : ?>
-                                                                <option value="<?= $idata['id']; ?>"><?= date('D, m Y', strtotime($idata['hari'])) . ' - ' . date('H:i', strtotime($idata['pukul'])); ?></option>
-                                                            <?php endforeach; ?>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="Tanggal">Tanggal</label>
-                                                    <br>
-                                                    <input type="date" class="form-control" name="waktu_input" id="waktu_input" value="<?= date('Y-m-d', strtotime($datprd['waktu_input'])); ?>">
-                                                </div>
-                                                <p class="text-center">Apakah anda yakin menambahkan item ini?</p>
+                                                <p class="text-center">Apakah anda yakin menambahkan Edit Data ini?</p>
                                             </div>
                                         </div>
                                     </div>
@@ -374,11 +335,11 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <li class="list-group-item">Nama &nbsp;:&nbsp;<?= $datprd['nama_produk']; ?></li>
-                                            <li class="list-group-item">Satuan &nbsp;:&nbsp;<?= $datprd['satuan']; ?></li>
+                                            <li class="list-group-item">Type &nbsp;:&nbsp;<?= $datprd['type']; ?></li>
                                             <li class="list-group-item">Harga &nbsp;:&nbsp;<?= $datprd['harga']; ?></li>
                                             <li class="list-group-item">Berat &nbsp;:&nbsp;<?= $datprd['berat']; ?></li>
                                             <li class="list-group-item">Stok &nbsp;:&nbsp;<?= $datprd['stok']; ?></li>
-                                            <li class="list-group-item">Jadwal &nbsp;:&nbsp;<?= date('D, m Y', strtotime($datprd['hari'])) . ' - ' . date('H:i', strtotime($datprd['pukul']));; ?></li>
+                                            <li class="list-group-item">Jadwal &nbsp;:&nbsp;<?= date('D, m Y', strtotime($datprd['created_at'])) . ' - ' . date('H:i', strtotime($datprd['created_at']));; ?></li>
                                         </div>
                                         <div class="col-md-6">
                                             <li class="list-group-item">Gambar
@@ -389,7 +350,7 @@
                                             <li class="list-group-item">Keterangan &nbsp;:&nbsp;<?= $datprd['keterangan']; ?></li>
                                             <li class="list-group-item">Username &nbsp;:&nbsp;<?= $datprd['username']; ?></li>
                                             <li class="list-group-item">Lokasi &nbsp;:&nbsp;<?= $datprd['tempat_kirim']; ?></li>
-                                            <li class="list-group-item">Tanggal &nbsp;:&nbsp;<?= date('D, m Y', strtotime($datprd['waktu_input'])); ?></li>
+                                            <li class="list-group-item">Tanggal &nbsp;:&nbsp;<?= date('D, m Y', strtotime($datprd['created_at'])); ?></li>
                                         </div>
                                     </div>
                                 </ul>

@@ -53,14 +53,14 @@ class Penjual extends CI_Controller
         } else {
             $id = $this->input->post('id_order');
             $data = [
-                'status' =>  $this->input->post('status'),
+                'proses' =>  $this->input->post('status'),
             ];
             $this->db->where('id_order', $id);
             $this->db->update('orders', $data);
             $this->session->set_flashdata(
                 'message',
                 '<div class="alert alert-success" role="alert">
-                 Data Transaksi berhasil diedit !
+                 Data Transaksi berhasil "Dikonfirmasi" !
                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                          <span aria-hidden="true">&times;</span>
                      </button>
@@ -93,14 +93,14 @@ class Penjual extends CI_Controller
         } else {
             $id = $this->input->post('id_order');
             $data = [
-                'status' =>  $this->input->post('status'),
+                'proses' =>  $this->input->post('status'),
             ];
             $this->db->where('id_order', $id);
             $this->db->update('orders', $data);
             $this->session->set_flashdata(
                 'message',
                 '<div class="alert alert-success" role="alert">
-                 Data Transaksi berhasil diedit !
+                 Data Transaksi berhasil "Dikonfirmasi" !
                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                          <span aria-hidden="true">&times;</span>
                      </button>
@@ -140,7 +140,7 @@ class Penjual extends CI_Controller
         $this->form_validation->set_rules('nama_produk', 'Nama', 'required|trim', [
             'required' => '%s tidak boleh kosong !'
         ]);
-        $this->form_validation->set_rules('satuan', 'Satuan', 'required|trim', [
+        $this->form_validation->set_rules('type', 'Type', 'required|trim', [
             'required' => '%s tidak boleh kosong !'
         ]);
         $this->form_validation->set_rules('harga', 'Harga', 'required|trim', [
@@ -153,9 +153,6 @@ class Penjual extends CI_Controller
             'required' => '%s tidak boleh kosong !'
         ]);
         $this->form_validation->set_rules('keterangan', 'Keterangan', 'required|trim', [
-            'required' => '%s tidak boleh kosong !'
-        ]);
-        $this->form_validation->set_rules('waktu_input', 'Waktu', 'required|trim', [
             'required' => '%s tidak boleh kosong !'
         ]);
 
@@ -192,31 +189,40 @@ class Penjual extends CI_Controller
                     //get gambar yang baru
                     $data = [
                         'nama_produk' => $this->input->post('nama_produk'),
-                        'satuan' => $this->input->post('satuan'),
+                        'type' => $this->input->post('type'),
                         'harga' => $this->input->post('harga'),
                         'berat' => $this->input->post('berat'),
                         'stok' => $this->input->post('stok'),
                         'gambar' => $this->upload->data('file_name'),
                         'keterangan' => $this->input->post('keterangan'),
-                        'username' => $this->input->post('username'),
-
-                        'waktu_input' => $this->input->post('waktu_input'),
-                        'id_ongkir' => $this->input->post('id_ongkir'),
+                        'id_lokasi' => $this->input->post('id_ongkir'),
                         'id_category' => $this->input->post('id_category'),
-                        'id_jadwal' => $this->input->post('id_jadwal'),
                         'id_user' => $this->session->userdata('id_user'),
                     ];
-                    $this->dsm->insert_product($data);
-                    $this->session->set_flashdata(
-                        'message',
-                        '<div class="alert alert-success" role="alert">
-                         Data Produk berhasil ditambahkan !
-                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                 <span aria-hidden="true">&times;</span>
-                             </button>
-                     </div>'
-                    );
-                    redirect('Penjual/data_produk');
+                    $query = $this->db->insert('product', $data);
+                    if ($query) {
+                        $this->session->set_flashdata(
+                            'message',
+                            '<div class="alert alert-success" role="alert">
+                             Data Produk berhasil ditambahkan !
+                                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                     <span aria-hidden="true">&times;</span>
+                                 </button>
+                         </div>'
+                        );
+                        redirect('Penjual/data_produk');
+                    } else {
+                        $this->session->set_flashdata(
+                            'message',
+                            '<div class="alert alert-danger" role="alert">
+                             Data Produk gagal ditambahkan !
+                                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                     <span aria-hidden="true">&times;</span>
+                                 </button>
+                         </div>'
+                        );
+                        redirect('Penjual/data_produk');
+                    }
                 } else {
                     $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
                      Ukuran melebihi batas. Maksimal 1000px x 1000px
@@ -230,32 +236,40 @@ class Penjual extends CI_Controller
 
             $data = [
                 'nama_produk' => $this->input->post('nama_produk'),
-                'satuan' => $this->input->post('satuan'),
+                'type' => $this->input->post('satuan'),
                 'harga_user' => $this->input->post('harga_user'),
                 'berat' => $this->input->post('berat'),
                 'gambar' => $this->upload->data('file_name'),
                 'keterangan' => $this->input->post('keterangan'),
-                'username' => $this->input->post('username'),
                 'id_ongkir' => $this->input->post('id_ongkir'),
                 'id_category' => $this->input->post('id_category'),
-                'id_jadwal' => $this->input->post('id_jadwal'),
                 'id_user' => $this->session->userdata('id_user'),
-
-                'waktu_input' => $this->input->post('waktu_input'),
             ];
 
-            $this->dsm->insert_product($data);
-
-            $this->session->set_flashdata(
-                'message',
-                '<div class="alert alert-success" role="alert">
-                 Data Produk berhasil ditambahkan !
-                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                         <span aria-hidden="true">&times;</span>
-                     </button>
-             </div>'
-            );
-            redirect('Penjual/data_produk');
+            $query = $this->db->insert('product', $data);
+            if ($query) {
+                $this->session->set_flashdata(
+                    'message',
+                    '<div class="alert alert-success" role="alert">
+                        Data Produk berhasil ditambahkan !
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                    </div>'
+                );
+                redirect('Penjual/data_produk');
+            } else {
+                $this->session->set_flashdata(
+                    'message',
+                    '<div class="alert alert-danger" role="alert">
+                        Data Produk gagal ditambahkan !
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                    </div>'
+                );
+                redirect('Penjual/data_produk');
+            }
         }
     }
 
@@ -265,7 +279,7 @@ class Penjual extends CI_Controller
         $this->form_validation->set_rules('nama_produk', 'Nama', 'required|trim', [
             'required' => '%s tidak boleh kosong !'
         ]);
-        $this->form_validation->set_rules('satuan', 'Satuan', 'required|trim', [
+        $this->form_validation->set_rules('type', 'Type', 'required|trim', [
             'required' => '%s tidak boleh kosong !'
         ]);
         $this->form_validation->set_rules('harga', 'Harga', 'required|trim', [
@@ -280,9 +294,6 @@ class Penjual extends CI_Controller
         $this->form_validation->set_rules('keterangan', 'Keterangan', 'required|trim', [
             'required' => '%s tidak boleh kosong !'
         ]);
-        $this->form_validation->set_rules('waktu_input', 'Waktu', 'required|trim', [
-            'required' => '%s tidak boleh kosong !'
-        ]);
 
         $this->form_validation->set_rules('id_ongkir', 'Lokasi', 'required|trim');
         $this->form_validation->set_rules('id_category', 'Kategori', 'required|trim');
@@ -290,7 +301,7 @@ class Penjual extends CI_Controller
         if ($this->form_validation->run() == false) {
             $data['title'] = 'Data Produk';
             $data['user'] = $this->db->get_where('user', ['email_user' => $this->session->userdata('email_user')])->row_array();
-            $data['data_product'] = $this->dsm->product();
+            $data['data_product'] = $this->dsm->product($data['user']['id_user']);
             $data['shipping'] = $this->dam->shipping();
             $data['category'] = $this->dam->category();
 
@@ -314,7 +325,7 @@ class Penjual extends CI_Controller
 
                 if ($this->upload->do_upload('image')) {
                     //get image yang lama
-                    $old_image = $tb['product']['image'];
+                    $old_image = $tb['product']['gambar'];
                     if ($old_image != 'default.png') {
                         @unlink(FCPATH . './assets/img/produk/' . $old_image);
                     }
@@ -323,17 +334,14 @@ class Penjual extends CI_Controller
                     $id = $this->input->post('id');
                     $data = [
                         'nama_produk' => $this->input->post('nama_produk'),
-                        'satuan' => $this->input->post('satuan'),
+                        'type' => $this->input->post('type'),
                         'harga' => $this->input->post('harga'),
                         'berat' => $this->input->post('berat'),
                         'stok' => $this->input->post('stok'),
                         'gambar' => $this->upload->data('file_name'),
                         'keterangan' => $this->input->post('keterangan'),
-                        'username' => $this->input->post('username'),
-                        'waktu_input' => $this->input->post('waktu_input'),
-                        'id_ongkir' => $this->input->post('id_ongkir'),
+                        'id_lokasi' => $this->input->post('id_ongkir'),
                         'id_category' => $this->input->post('id_category'),
-                        'id_jadwal' => $this->input->post('id_jadwal'),
                         'id_user' => $this->session->userdata('id_user'),
                     ];
                     $this->db->where('id_product', $id);
@@ -375,18 +383,14 @@ class Penjual extends CI_Controller
             $id = $this->input->post('id');
             $data = [
                 'nama_produk' => $this->input->post('nama_produk'),
-                'satuan' => $this->input->post('satuan'),
+                'type' => $this->input->post('type'),
                 'harga' => $this->input->post('harga'),
                 'berat' => $this->input->post('berat'),
                 'stok' => $this->input->post('stok'),
                 'keterangan' => $this->input->post('keterangan'),
-                'username' => $this->input->post('username'),
-                'id_ongkir' => $this->input->post('id_ongkir'),
+                'id_lokasi' => $this->input->post('id_ongkir'),
                 'id_category' => $this->input->post('id_category'),
-                'id_jadwal' => $this->input->post('id_jadwal'),
                 'id_user' => $this->session->userdata('id_user'),
-
-                'waktu_input' => $this->input->post('waktu_input'),
             ];
 
             $this->db->where('id_product', $id);
@@ -396,7 +400,7 @@ class Penjual extends CI_Controller
                 $this->session->set_flashdata(
                     'message',
                     '<div class="alert alert-success" role="alert">
-                     Data Product berhasil ditambahkan !
+                     Data Product berhasil diedit !
                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                              <span aria-hidden="true">&times;</span>
                          </button>
@@ -407,7 +411,7 @@ class Penjual extends CI_Controller
                 $this->session->set_flashdata(
                     'message',
                     '<div class="alert alert-danger" role="alert">
-                     Data Product gagal ditambahkan !
+                     Data Product gagal diedit !
                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                              <span aria-hidden="true">&times;</span>
                          </button>

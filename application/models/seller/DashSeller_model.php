@@ -13,9 +13,8 @@ class DashSeller_model extends CI_Model
     public function product($id)
     {
         $query = "SELECT * FROM product
-                    JOIN ongkir ON product.id_ongkir = ongkir.id_ongkir
+                    JOIN ongkir ON product.id_lokasi = ongkir.id_ongkir
                     JOIN category ON product.id_category = category.id_category
-                    JOIN jadwal ON product.id_jadwal = jadwal.id
                     WHERE product.id_user = $id";
         return $this->db->query($query)->result_array();
     }
@@ -52,12 +51,13 @@ class DashSeller_model extends CI_Model
     //Transaksi keseluruhan
     public function getOrderMonthly($id)
     {
-        $query = "SELECT COUNT(orders.kode_transaksi) AS sumtran, DATE_FORMAT(orders.waktu_input, '%M %Y') AS bulan
+        $query = "SELECT COUNT(orders.kode_transaksi) AS sumtran, DATE_FORMAT(orders.waktu_transaksi, '%M %Y') AS bulan
          FROM orders
-               WHERE orders.id_penjual = $id
-               GROUP BY MONTH(orders.waktu_input)
+         JOIN orderdetails ON orders.id_order = orderdetails.id_order
+               WHERE orderdetails.id_user = $id
+               GROUP BY MONTH(orders.waktu_transaksi)
                HAVING COUNT(orders.kode_transaksi)
-               ORDER BY orders.waktu_input ASC";
+               ORDER BY orders.waktu_transaksi ASC";
 
         $getOrderPerMonth = $this->db->query($query)->result_array();
 
@@ -67,12 +67,13 @@ class DashSeller_model extends CI_Model
     //Transaksi Selesai
     public function getOrderFinish($id)
     {
-        $query = "SELECT COUNT(orders.kode_transaksi) AS sumtran, DATE_FORMAT(orders.waktu_input, '%M %Y') AS bulan
+        $query = "SELECT COUNT(orders.kode_transaksi) AS sumtran, DATE_FORMAT(orders.waktu_transaksi, '%M %Y') AS bulan
           FROM orders
-             WHERE orders.status = 3 AND orders.id_penjual = $id
-                GROUP BY MONTH(orders.waktu_input)
+          JOIN orderdetails ON orders.id_order = orderdetails.id_order
+             WHERE orders.proses = 3 AND orderdetails.id_user = $id
+                GROUP BY MONTH(orders.waktu_transaksi)
                 HAVING COUNT(orders.kode_transaksi)
-                ORDER BY orders.waktu_input ASC";
+                ORDER BY orders.waktu_transaksi ASC";
 
         $getOrderFinish = $this->db->query($query)->result_array();
 
@@ -84,10 +85,10 @@ class DashSeller_model extends CI_Model
     {
         $query = "SELECT * FROM orderdetails
                     JOIN orders ON orderdetails.id_order = orders.id_order
-                    JOIN category ON orders.id_category = category.id_category
-                    JOIN ongkir ON orders.id_ongkir = ongkir.id_ongkir
-                    JOIN jadwal ON orders.id_jadwal = jadwal.id
-                    WHERE orders.id_penjual = $id
+                    JOIN jam_antar ON orders.id_jamantar = jam_antar.id
+                    JOIN product ON orderdetails.id_product = product.id_product
+                    JOIN user ON orderdetails.id_user = user.id_user
+                    WHERE orderdetails.id_user = $id
                     GROUP BY orders.kode_transaksi";
         return $this->db->query($query)->result_array();
     }

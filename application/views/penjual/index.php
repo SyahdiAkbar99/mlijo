@@ -66,7 +66,7 @@
                             <i class="material-icons">location_on</i>
                         </div>
                         <p class="card-category">Lokasi</p>
-                        <h3 class="card-title"><?= $user['alamat'] . ' - ' . $user['tempat_lahir']; ?></h3>
+                        <h3 class="card-title"><?= $user['alamat']; ?></h3>
                     </div>
                     <div class="card-footer">
                         <div class="stats">

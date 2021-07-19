@@ -19,8 +19,9 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Hari</th>
-                                        <th>Pukul</th>
+                                        <th>Nama Produk</th>
+                                        <th>Tanggal Ready</th>
+                                        <th>Dibuat</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -31,19 +32,22 @@
                                         <tr>
                                             <td><?= $no ?></td>
                                             <td>
-                                                <?= date('D, m Y', strtotime($jdl['hari'])); ?>
+                                                <?= $jdl['nama_produk']; ?>
                                             </td>
                                             <td>
-                                                <?= date('H:i', strtotime($jdl['pukul'])); ?>
+                                                <?= date('D, m Y', strtotime($jdl['tanggal_ready'])); ?>
+                                            </td>
+                                            <td>
+                                                <?= date('H:i', strtotime($jdl['created_at'])); ?>
                                             </td>
                                             <td>
                                                 <div class="row">
-                                                    <div class="col-lg-1">
+                                                    <div class="col-lg-2">
                                                         <a href="#edit<?= $jdl['id'] ?>" class="badge badge-warning" data-toggle="modal">
                                                             <i class="fa fa-edit"></i>Edit
                                                         </a>
                                                     </div>
-                                                    <div class="col-lg-1">
+                                                    <div class="col-lg-2">
                                                         <a href="#delete<?= $jdl['id'] ?>" class="badge badge-danger" data-toggle="modal">
                                                             <i class="fa fa-edit"></i>Delete
                                                         </a>
@@ -82,11 +86,17 @@
                         <div class="modal-body">
                             <div class="form-group" class="mt-4">
                                 <label for="Nama" class="">Hari</label>
+                                <br>
                                 <input type="date" class="form-control" name="hari" id="hari">
                             </div>
                             <div class="form-group" class="mt-4">
-                                <label for="Jenis" class="">Pukul</label>
-                                <input type="time" class="form-control" name="pukul" id="pukul">
+                                <label for="Nama Produk" class="">Nama Produk</label>
+                                <br>
+                                <select class="form-control" name="nama_produk" id="nama_produk">
+                                    <?php foreach ($products as $prd) : ?>
+                                        <option value="<?= $prd['id_product']; ?>"><?= $prd['nama_produk']; ?></option>
+                                    <?php endforeach; ?>
+                                </select>
                             </div>
                         </div>
                         <div class="modal-footer justify-content-end">
@@ -118,14 +128,19 @@
                             <div class="modal-body">
                                 <input type="hidden" name="id" id="id" value="<?= $jdl['id']; ?>">
                                 <div class="form-group" class="mt-4">
-                                    <label for="Nama" class="">Hari</label>
+                                    <label for="Hari" class="">Hari</label>
                                     <br>
-                                    <input type="date" class="form-control" name="hari" id="hari" value="<?= $jdl['hari']; ?>">
+                                    <input type="date" class="form-control" name="hari" id="hari" value="<?= $jdl['tanggal_ready']; ?>">
                                 </div>
                                 <div class="form-group" class="mt-4">
-                                    <label for="Jenis" class="">Pukul</label>
+                                    <label for="Nama Produk" class="">Nama Produk</label>
                                     <br>
-                                    <input type="time" class="form-control" name="pukul" id="pukul" value="<?= $jdl['pukul']; ?>">
+                                    <select class="form-control" name="nama_produk" id="nama_produk">
+                                        <option value="<?= $jdl['id_product']; ?>"><?= $jdl['nama_produk']; ?></option>
+                                        <?php foreach ($products as $prd) : ?>
+                                            <option value="<?= $prd['id_product']; ?>"><?= $prd['nama_produk']; ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
                                 </div>
                                 <p class="text-center">Apakah anda yakin edit item ini?</p>
                             </div>

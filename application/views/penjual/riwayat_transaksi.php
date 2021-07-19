@@ -32,8 +32,6 @@
                                         <th>Username</th>
                                         <th>Lokasi</th>
                                         <th>Tarif</th>
-                                        <th>Kategori</th>
-                                        <th>Jadwal</th>
                                         <th>Status</th>
                                         <th>Tanggal</th>
                                         <th class="text-center">Opsi</th>
@@ -43,7 +41,7 @@
                                     <?php
                                     $no = 1;
                                     foreach ($riwayat_trans as $rwt) : ?>
-                                        <?php if ($rwt['status'] > 0) : ?>
+                                        <?php if ($rwt['proses'] >= 0) : ?>
                                             <tr>
                                                 <td><?= $no ?></td>
                                                 <td>
@@ -62,7 +60,7 @@
                                                     <?= $rwt['stok']; ?>
                                                 </td>
                                                 <td>
-                                                    <div class="row justify-content-center">
+                                                    <div class="row justify-content-center m-2">
                                                         <div class="card" style="width: 10rem;">
                                                             <img src="<?= base_url('assets/img/produk/') . $rwt['gambar']; ?>" class="img-thumbnail" alt="plant-pict">
                                                         </div>
@@ -75,30 +73,24 @@
                                                     <?= $rwt['username']; ?>
                                                 </td>
                                                 <td>
-                                                    <?= $rwt['tempat_kirim']; ?>
+                                                    <?= $rwt['alamat_lengkap']; ?>
                                                 </td>
                                                 <td>
-                                                    <?= $rwt['tarif']; ?>
+                                                    <?= $rwt['ongkir']; ?>
                                                 </td>
                                                 <td>
-                                                    <?= $rwt['nama_category']; ?>
-                                                </td>
-                                                <td>
-                                                    <?= date('D, m Y', strtotime($rwt['hari'])) . ' - ' . date('H:i', strtotime($rwt['pukul'])); ?>
-                                                </td>
-                                                <td>
-                                                    <?php if ($rwt['status'] == 0) : ?>
+                                                    <?php if ($rwt['proses'] == 0) : ?>
                                                         Proses
-                                                    <?php elseif ($rwt['status'] == 1) : ?>
+                                                    <?php elseif ($rwt['proses'] == 1) : ?>
                                                         Dikirim
-                                                    <?php elseif ($rwt['status'] == 2) : ?>
+                                                    <?php elseif ($rwt['proses'] == 2) : ?>
                                                         Dijalan
                                                     <?php else : ?>
                                                         Selesai
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
-                                                    <?= date('d M Y', strtotime($rwt['waktu_input'])); ?>
+                                                    <?= date('d M Y', strtotime($rwt['waktu_transaksi'])); ?>
                                                 </td>
                                                 <td>
                                                     <div class="row justify-content-center">
@@ -244,7 +236,6 @@
                                             <div class="col-md-6">
                                                 <input type="hidden" name="id_order" id="id_order" value="<?= $rwt['id_order']; ?>">
                                                 <input type="hidden" name="id" id="id" value="<?= $rwt['id_product']; ?>">
-                                                <input type="hidden" name="penjual_id" id="penjual_id" value="<?= $rwt['id_penjual']; ?>">
                                                 <div class="form-group">
                                                     <label for="Kode">Kode Transaksi</label>
                                                     <br>
@@ -302,43 +293,28 @@
                                                 <div class="form-group">
                                                     <div class="form-group">
                                                         <label for="Lokasi">Lokasi</label>
-                                                        <select class="form-control" data-style="btn btn-link" name="id_ongkir" id="id_ongkir" disabled>
-                                                            <option value="<?= $rwt['id_ongkir'] ?>"><?= $rwt['tempat_kirim']; ?></option>
-                                                            <?php foreach ($shipping as $rows) : ?>
-                                                                <option value="<?= $rows['id_ongkir']; ?>"><?= $rows['id_ongkir'] . ' - ' . $rows['tempat_kirim']; ?></option>
-                                                            <?php endforeach; ?>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <div class="form-group">
-                                                        <label for="Kategori">Kategori</label>
-                                                        <select class="form-control" data-style="btn btn-link" name="id_category" id="id_category" disabled>
-                                                            <option value="<?= $rwt['id_category'] ?>"><?= $rwt['nama_category']; ?></option>
-                                                            <?php foreach ($category as $data) : ?>
-                                                                <option value="<?= $data['id_category']; ?>"><?= $data['id_category'] . ' - ' . $data['nama_category']; ?></option>
-                                                            <?php endforeach; ?>
-                                                        </select>
+                                                        <br>
+                                                        <input type="text" class="form-control" name="username" id="username" value="<?= $rwt['alamat_lengkap']; ?>" readonly>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Tanggal">Tanggal</label>
                                                     <br>
-                                                    <input type="date" class="form-control" name="waktu_input" id="waktu_input" value="<?= date('Y-m-d', strtotime($rwt['waktu_input'])); ?>" readonly>
+                                                    <input type="date" class="form-control" name="waktu_transaksi" id="waktu_transaksi" value="<?= date('Y-m-d', strtotime($rwt['waktu_transaksi'])); ?>" readonly>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="Status">Status</label>
                                                     <br>
                                                     <select class="form-control" data-style="btn btn-link" name="status" id="status">
-                                                        <option value="<?= $rwt['status'] ?>">
-                                                            <?= ($rwt['status'] == 1 ? 'Dikirim' : ($rwt['status'] == 2 ? 'Dijalan' : ($rwt['status'] == 3 ? 'Selesai' : 'Proses')))  ?>
+                                                        <option value="<?= $rwt['proses'] ?>">
+                                                            <?= ($rwt['proses'] == 1 ? 'Dikirim' : ($rwt['proses'] == 2 ? 'Dijalan' : ($rwt['proses'] == 3 ? 'Selesai' : 'Proses')))  ?>
                                                         </option>
                                                         <option value="1">Dikirim</option>
                                                         <option value="2">Dijalan</option>
                                                         <option value="3">Selesai</option>
                                                     </select>
                                                 </div>
-                                                <p class="text-center">Apakah anda yakin menambahkan item ini?</p>
+                                                <p class="text-center">Apakah anda yakin menambahkan "Mengkonfirmasi Data" ini?</p>
                                             </div>
                                         </div>
                                     </div>
@@ -391,8 +367,8 @@
                                             </li>
                                             <li class="list-group-item">Keterangan &nbsp;:&nbsp;<?= $rwt['keterangan']; ?></li>
                                             <li class="list-group-item">Username &nbsp;:&nbsp;<?= $rwt['username']; ?></li>
-                                            <li class="list-group-item">Lokasi &nbsp;:&nbsp;<?= $rwt['tempat_kirim']; ?></li>
-                                            <li class="list-group-item">Tanggal &nbsp;:&nbsp;<?= date('D, m Y', strtotime($rwt['waktu_input'])); ?></li>
+                                            <li class="list-group-item">Lokasi &nbsp;:&nbsp;<?= $rwt['alamat_lengkap']; ?></li>
+                                            <li class="list-group-item">Tanggal &nbsp;:&nbsp;<?= date('D, m Y', strtotime($rwt['waktu_transaksi'])); ?></li>
                                         </div>
                                     </div>
                                 </ul>

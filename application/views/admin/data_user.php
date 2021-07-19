@@ -84,7 +84,8 @@
                                         <?php endif; ?>
                                     <?php
                                         $no++;
-                                    endforeach; ?>
+                                    endforeach;
+                                    ?>
                                 </tbody>
                                 <tfoot></tfoot>
                             </table>
@@ -113,43 +114,40 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <label for="Nama">Nama</label>
+                                <br>
                                 <input type="text" class="form-control" name="name_user" id="name_user">
                             </div>
                             <div class="form-group">
                                 <label for="Email">Email</label>
+                                <br>
                                 <input type="email" class="form-control" name="email_user" id="email_user">
                             </div>
                             <div class="form-group">
                                 <label for="No Telpon">No Telpon</label>
+                                <br>
                                 <input type="text" name="no_telp" id="no_telp" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label for="Username">Username</label>
+                                <br>
                                 <input type="text" class="form-control" name="username" id="username">
                             </div>
                             <div class="form-group">
                                 <label for="Password">Password</label>
+                                <br>
                                 <input type="password" class="form-control" name="password" id="password">
                             </div>
                             <div class="form-group">
                                 <label for="Level">Level</label>
-                                <input type="text" class="form-control" name="level" id="level">
-                            </div>
-                            <div class="form-group">
-                                <label for="Jenis Kelamin">Jenis Kelamin</label>
-                                <input type="text" class="form-control" name="jenis_kelamin" id="jenis_kelamin">
+                                <select class="form-control" name="level" id="level">
+                                    <option value="1">Admin</option>
+                                    <option value="2">Penjual</option>
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="Alamat">Alamat</label>
+                                <br>
                                 <input type="text" class="form-control" name="alamat" id="alamat">
-                            </div>
-                            <div class="form-group">
-                                <label for="Tempat Lahir">Tempat Lahir</label>
-                                <input type="text" class="form-control" name="tempat_lahir" id="tempat_lahir">
-                            </div>
-                            <div class="form-group">
-                                <label for="Tanggal Lahir">Tanggal Lahir</label>
-                                <input type="date" class="form-control" name="tanggal_lahir" id="tanggal_lahir">
                             </div>
                         </div>
                         <div class="modal-footer justify-content-end">
@@ -181,8 +179,8 @@
                                 <p class="text-center">Apakah anda yakin data ini dihapus?</p>
                             </div>
                             <div class="modal-footer justify-content-end">
-                                <button type="submit" class="btn btn-danger btn-outline-light">Ya</button>
-                                <button type="button" class="btn btn-light btn-outline-light" data-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-info btn-outline-light">Ya</button>
+                                <button type="button" class="btn btn-danger btn-outline-light" data-dismiss="modal">Cancel</button>
                             </div>
                         </form>
                     </div>
@@ -209,44 +207,43 @@
                             <div class="modal-body">
                                 <div class="form-group">
                                     <label for="Nama">Nama</label>
+                                    <br>
                                     <input type="hidden" class="form-control" name="id" id="id" value="<?= $datusr['id_user']; ?>">
                                     <input type="text" class="form-control" name="name_user" id="name_user" value="<?= $datusr['nama_user']; ?>">
                                 </div>
                                 <div class="form-group">
                                     <label for="Email">Email</label>
+                                    <br>
                                     <input type="email" class="form-control" name="email_user" id="email_user" value="<?= $datusr['email_user'] ?>">
                                 </div>
                                 <div class="form-group">
                                     <label for="No Telpon">No Telpon</label>
+                                    <br>
                                     <input type="text" name="no_telp" id="no_telp" class="form-control" value="<?= $datusr['no_telp']; ?>">
                                 </div>
                                 <div class="form-group">
                                     <label for="Username">Username</label>
+                                    <br>
                                     <input type="text" class="form-control" name="username" id="username" value="<?= $datusr['username']; ?>">
                                 </div>
                                 <div class="form-group">
                                     <label for="Password">Password</label>
+                                    <br>
                                     <input type="text" class="form-control" name="password" id="password" value="<?= $datusr['password']; ?>">
                                 </div>
                                 <div class="form-group">
                                     <label for="Level">Level</label>
-                                    <input type="text" class="form-control" name="level" id="level" value="<?= $datusr['level']; ?>">
-                                </div>
-                                <div class="form-group">
-                                    <label for="Jenis Kelamin">Jenis Kelamin</label>
-                                    <input type="text" class="form-control" name="jenis_kelamin" id="jenis_kelamin" value="<?= $datusr['jenis_kelamin']; ?>">
+                                    <br>
+                                    <select class="form-control" name="level" id="level">
+                                        <option value="<?= ($datusr['level'] == "admin" ? 1 : ($datusr['level'] == "penjual" ? 2 : 0)); ?>"><?= $datusr['level']; ?></option>
+                                        <option value="1">Admin</option>
+                                        <option value="2">Penjual</option>
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="Alamat">Alamat</label>
+                                    <br>
                                     <input type="text" class="form-control" name="alamat" id="alamat" value="<?= $datusr['alamat']; ?>">
-                                </div>
-                                <div class="form-group">
-                                    <label for="Tempat Lahir">Tempat Lahir</label>
-                                    <input type="text" class="form-control" name="tempat_lahir" id="tempat_lahir" value="<?= $datusr['tempat_lahir']; ?>">
-                                </div>
-                                <div class="form-group">
-                                    <label for="Tanggal Lahir">Tanggal Lahir</label>
-                                    <input type="date" class="form-control" name="tanggal_lahir" id="tanggal_lahir" value="<?= date('Y-m-d', strtotime($datusr['tanggal_lahir'])) ?>">
                                 </div>
                             </div>
                             <div class="modal-footer justify-content-end">
@@ -285,10 +282,7 @@
                                     <li class="list-group-item">Username &nbsp;:&nbsp;<?= $datusr['username']; ?></li>
                                     <li class="list-group-item">Password &nbsp;:&nbsp;<?= $datusr['password']; ?></li>
                                     <li class="list-group-item">Level &nbsp;:&nbsp;<?= $datusr['level']; ?></li>
-                                    <li class="list-group-item">Jenis Kelamin &nbsp;:&nbsp;<?= $datusr['jenis_kelamin']; ?></li>
                                     <li class="list-group-item">Alamat &nbsp;:&nbsp;<?= $datusr['alamat']; ?></li>
-                                    <li class="list-group-item">Tempat Lahir &nbsp;:&nbsp;<?= $datusr['tempat_lahir']; ?></li>
-                                    <li class="list-group-item">Tanggal Lahir &nbsp;:&nbsp;<?= date('D, m Y', strtotime($datusr['tanggal_lahir'])) ?></li>
                                 </ul>
                             </div>
                         </div>
